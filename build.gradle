@@ -1,0 +1,123 @@
+buildscript {
+    repositories {
+        jcenter()
+//        maven { url "http://repo.spring.io/snapshot" }
+//        maven { url "http://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE")
+    }
+}
+
+group 'GroovyKB'
+version '1.0'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: "war"
+apply plugin: 'spring-boot'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+    maven { url "https://jitpack.io" }
+//    maven { url "https://repo.grails.org/grails/core" }
+//    maven { url "http://repo.spring.io/snapshot" }
+//    maven { url "http://repo.spring.io/milestone" }
+}
+
+task firstTask;
+firstTask.doFirst {
+    println("Hello World1")
+}
+firstTask.doFirst {
+    println("Hello World2")
+}
+firstTask.doFirst {
+    println("Hello World3")
+}
+
+defaultTasks 'firstTask'
+
+jar {
+    baseName = 'store_management'
+    version =  '0.1.0'
+}
+
+war {
+    baseName = 'SpringMVCExample'
+    version = '1.0.0-BUILD-SNAPSHOT'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    main {
+        java {
+            srcDir "src/main/java"
+            srcDir "src/main/lucen"
+        }
+        resources.srcDir "src/main/resources"
+    }
+    test {
+        java.srcDir "src/test/java"
+        resources.srcDir "src/test/resources"
+    }
+    integrationTest {
+        java.srcDir "src/integrationTest/java"
+        resources.srcDir "src/integrationTest/resources"
+
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+task integrationTest(type: Test) {
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+}
+
+check.dependsOn integrationTest
+integrationTest.mustRunAfter test
+
+tasks.withType(Test) {
+    reports.html.destination = file("${reporting.baseDir}/${name}")
+}
+dependencies {
+    compile group: 'com.sun.messaging.mq', name: 'fscontext', version: '4.4.2'
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    compile 'org.hibernate:hibernate-core:5.0.2.Final'
+
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.5'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5'
+
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.9'
+    compile group: 'org.grails', name: 'grails-encoder', version: '2.5.1'
+
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-jdbc")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.springframework.boot:spring-boot-starter-data-elasticsearch")
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+
+    compile("net.java.dev.jna:jna")
+    compile("mysql:mysql-connector-java:5.1.38")
+
+    compile 'com.github.kenglxn.QRGen:javase:2.2.0'
+
+    compile 'net.sf.supercsv:super-csv:2.4.0'
+
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
