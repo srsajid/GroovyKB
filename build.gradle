@@ -111,6 +111,7 @@ dependencies {
 
     compile("net.java.dev.jna:jna")
     compile("mysql:mysql-connector-java:5.1.38")
+    compile("org.apache.poi:poi:3.17")
 
     compile 'com.github.kenglxn.QRGen:javase:2.2.0'
 

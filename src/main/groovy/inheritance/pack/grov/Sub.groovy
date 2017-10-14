@@ -3,7 +3,7 @@ package inheritance.pack.grov;
 /**
  * Created by Sajid on 13-03-16.
  */
-public class Sub implements Super {
+class Sub extends Super {
 
     void subClassMethod() {
         pbMethod();

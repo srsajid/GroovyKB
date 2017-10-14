@@ -1,0 +1,47 @@
+package util
+
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.ResultSet
+import java.sql.ResultSetMetaData
+import java.sql.Statement
+
+class DB {
+    String server = "localhost"
+    String user = "root"
+    String password = ""
+    String database
+    Connection connection
+
+    public DB(String database) {
+        this.database = database
+        Class.forName("com.mysql.jdbc.Driver")
+        String url = "jdbc:mysql://${server}/${database}?characterEncoding=utf8&autoReconnect=true"
+        connection = DriverManager.getConnection(url, user, password)
+    }
+
+    def getResult(String sql) {
+        Statement statement = connection.createStatement();
+        Boolean executeResult = statement.execute(sql);
+        if(executeResult) {
+            ResultSet resultSet = statement.getResultSet()
+            List<Map> list = []
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            Integer noOfColumn = metaData.getColumnCount()
+            while (resultSet.next()) {
+                Map map = [:]
+                for (int i = 1; i <= noOfColumn; i++) {
+                    map.put(metaData.getColumnName(i), resultSet.getString(i))
+                }
+                list.add(map)
+            }
+            return list
+        } else  {
+            return statement.getUpdateCount()
+        }
+    }
+
+    void close() {
+        connection.close()
+    }
+}
