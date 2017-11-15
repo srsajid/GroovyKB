@@ -2,6 +2,7 @@ package util
 
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import java.sql.Statement
@@ -39,6 +40,20 @@ class DB {
         } else  {
             return statement.getUpdateCount()
         }
+    }
+
+    def insert(String sql, List args) {
+        PreparedStatement statement =  connection.prepareStatement(sql)
+        args.eachWithIndex { Object entry, int i ->
+            if(entry instanceof String) {
+                statement.setString(i+1, entry)
+            } else if(entry instanceof Double) {
+                statement.setDouble(i+1, entry)
+            } else if(entry instanceof float ) {
+                statement.setFloat(i+1, entry)
+            }
+        }
+      return statement.execute();
     }
 
     void close() {
