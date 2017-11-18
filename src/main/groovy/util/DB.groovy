@@ -49,11 +49,14 @@ class DB {
                 statement.setString(i+1, entry)
             } else if(entry instanceof Double) {
                 statement.setDouble(i+1, entry)
-            } else if(entry instanceof float ) {
+            } else if(entry instanceof Float ) {
                 statement.setFloat(i+1, entry)
+            } else if(entry instanceof Integer) {
+                statement.setInt(i+1, entry)
             }
         }
-      return statement.execute();
+        statement.execute();
+        return statement.updateCount
     }
 
     void close() {

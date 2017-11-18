@@ -1,18 +1,20 @@
 package startech.crawler
 
-import org.apache.commons.lang.StringEscapeUtils
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.jsoup.nodes.Element
+import thread.pool.MyMonitorThread
 import util.DB
 
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
 public class JSoupTest {
     static db = new DB("price_comapre");
+    static ConcurrentHashMap<String, Integer> failedCount = new ConcurrentHashMap<String, Integer> ()
 
     static List getAllProductURLs(Document categoryDoc) {
         List<String> productURLs = []
@@ -47,11 +49,16 @@ public class JSoupTest {
                 break
             }
         }
-
-        db.insert("INSERT INTO `ryans_product` (`name`, `code`, `model`, `url`, `price`) VALUES (?, ?, ?, ?, ?)", [name, code, model, productUrl, price])
+        Integer result = db.insert("INSERT INTO `ryans_product` (`name`, `code`, `model`, `url`, `price`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `updated` = now()", [name, code, model, productUrl, price, name, model, productUrl, price])
+        if(result) {
+//            println("Product save succes: $code")
+        } else {
+//            println("Product save failed: $code")
+        }
     }
 
     static void crawlCategory(String categoryURL) {
+        println("Crawling Category: ${categoryURL}")
         List<String> productURLs = []
         Document doc = Jsoup.connect(categoryURL).get();
         while (doc) {
@@ -70,10 +77,9 @@ public class JSoupTest {
     }
 
 
-    public static void main(String[] args) {
-        StringEscapeUtils.escapeJavaScript("'")
+    static void crawler() {
         Document doc = Jsoup.connect("https://ryanscomputers.com/").get();
-        Elements menus = doc.select("ul.sm-megamenu-hover.sm_megamenu_menu > li.other-toggle")
+        Elements menus = doc.select("ul.sm_megamenu_menu > li.other-toggle")
         menus.remove(0)
         List<String> categoryURLs = []
         menus.each {
@@ -85,8 +91,10 @@ public class JSoupTest {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(10);
-
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+        MyMonitorThread monitor = new MyMonitorThread(executor, 3);
+        Thread monitorThread = new Thread(monitor);
+        monitorThread.start();
         categoryURLs.each { url ->
             executor.execute({
                 try {
@@ -96,5 +104,11 @@ public class JSoupTest {
                 }
             })
         }
+        executor.shutdown()
+    }
+
+    public static void main(String[] args) {
+        crawlCategory("https://ryanscomputers.com/laptop-notebook.html")
+        crawler()
     }
 }
