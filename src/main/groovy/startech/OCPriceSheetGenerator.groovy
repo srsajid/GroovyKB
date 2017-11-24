@@ -9,7 +9,7 @@ import util.DB
 
 
 class OCPriceSheetGenerator {
-    final private static int PARENT_CATEGORY = 189;
+    final private static int PARENT_CATEGORY = 102;
 
     public static void main(String[] args) {
         DB db = new DB("startech");
@@ -37,7 +37,7 @@ class OCPriceSheetGenerator {
                 }
             }
 
-            FileOutputStream fileOut = new FileOutputStream("c:\\MyDrive\\printers.xls");
+            FileOutputStream fileOut = new FileOutputStream("c:\\MyDrive\\DSLR Camera.xls");
             wb.write(fileOut);
             fileOut.flush();
             fileOut.close();

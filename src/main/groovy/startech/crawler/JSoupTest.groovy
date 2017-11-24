@@ -31,10 +31,10 @@ public class JSoupTest {
     static crawlProduct(String productUrl) {
         Document productDoc = Jsoup.connect(productUrl).get();
         Elements specs = productDoc.select("#product-attribute-specs-table tr");
-        String name = productDoc.select(".product-name h2")[0]?.text()?.trim()
-        String code = productDoc.select(".productsku span")[0]?.text()?.trim()
-        String price = productDoc.select(".regular-price .price")[0]?.text()?.trim()
-        price = price ?: productDoc.select(".special-price .price")[0]?.text()?.trim()
+        String name = productDoc.select(".product-essential .product-name h2")[0]?.text()?.trim()
+        String code = productDoc.select(".product-essential .productsku span")[0]?.text()?.trim()
+        String price = productDoc.select(".product-essential .regular-price .price")[0]?.text()?.trim()
+        price = price ?: productDoc.select(".product-essential .special-price .price")[0]?.text()?.trim()
         if(price) {
             price = price.replaceAll("[A-Za-z,]", "")
         }
@@ -109,10 +109,10 @@ public class JSoupTest {
 
     public static void CrawlCategories() {
         List categoryURLs = [
-                "https://ryanscomputers.com/office-equipment/projector.html",
+                "https://ryanscomputers.com/tablet-pc/all-brands.html",
         ]
-        ExecutorService executor = Executors.newFixedThreadPool(5);
-        MyMonitorThread monitor = new MyMonitorThread(executor, 3);
+        ExecutorService executor = Executors.newFixedThreadPool(6);
+        MyMonitorThread monitor = new MyMonitorThread(executor, 5);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
         categoryURLs.each { url ->
@@ -129,5 +129,6 @@ public class JSoupTest {
 
     public static void main(String[] args) {
         CrawlCategories()
+        crawler()
     }
 }
