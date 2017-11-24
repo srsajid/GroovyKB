@@ -1,14 +1,20 @@
 package startech
 
+import http.HttpUtil
 import org.apache.poi.hssf.usermodel.HSSFCell
 import org.apache.poi.hssf.usermodel.HSSFRow
 import org.apache.poi.hssf.usermodel.HSSFSheet
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.CellType
+import util.DB
 
 class OCPriceSheetUpdater {
     final private static int PARENT_CATEGORY = 237;
-    final private static String NAME = "printers-price-update";
+    final private static String NAME = "tab";
+    final private static String host = "http://www.startech.com.bd/";
+    final private static String operatorEmail = "sajid@startechbd.com";
+    final private static String operatorPass = "ASDFG;lkjh";
+
 
     static List readXLSRow(HSSFRow row) {
         Iterator cells = row.cellIterator();
@@ -19,8 +25,10 @@ class OCPriceSheetUpdater {
                 cellValues.add(cell.getStringCellValue().trim())
             } else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
                 cellValues.add(cell.getNumericCellValue())
+            } else if(cell.getCellTypeEnum() == CellType.BLANK){
+                cellValues.add("")
             } else {
-                println("Breaking Point")
+                println("Invalid Cell")
             }
         }
         return cellValues
@@ -39,7 +47,12 @@ class OCPriceSheetUpdater {
 
         while (rows.hasNext()) {
             Map rowValue = [:]
-            readXLSRow(rows.next()).eachWithIndex { Object entry, int i ->
+            List row = readXLSRow(rows.next());
+            if(row.size() < 6) {
+                println("Invalid Row: " + row.toString())
+                continue
+            }
+            row.eachWithIndex { Object entry, int i ->
                 String key = headers[i]
                 key && (rowValue[key] = entry)
             }
@@ -77,29 +90,36 @@ class OCPriceSheetUpdater {
     }
 
     static void main(String[] args) {
+        String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$operatorPass".getBytes());
+        DB db = new DB("startech");
+        Map stockStatusIndex = [:]
+        db.getResult("select * from sr_stock_status").each {
+            String name = it.name.trim()
+            name = name.toLowerCase().replaceAll("\\s+", "_")
+            stockStatusIndex[name] = it.stock_status_id
+        }
         Map<String, List> map = readXLSFile(new FileInputStream("C:\\MyDrive\\${NAME}.xls"))
         StringWriter writer = new StringWriter();
         map.each { String key, List<Map> values ->
             values.each { Map value ->
                 if(skip(value)) { return }
-                String updateSql = ""
-                if(value.new_status == "delete") {
-                    updateSql = "`status`='0'"
-                } else if(value.new_status == "In Stock") {
-                    updateSql = "`status`='1', quantity = '100'"
+                String newStatus  = value.new_status ?: ""
+                newStatus = newStatus.toLowerCase().trim().replaceAll("\\s+", "_");
+                if(newStatus && newStatus != "delete" && !stockStatusIndex.containsKey(newStatus)) {
+                    println("Invalid Entry Product id: ${value.product_id}, Name: ${value.name}")
+                    return
+                } else if(newStatus != "delete") {
+                    newStatus = stockStatusIndex[newStatus]
                 }
+                Double newPrice = value.new_price ? Double.parseDouble(value.new_price.toString()) : null
+                String response = HttpUtil.doPostRequest("${host}index.php?route=operator/product_update_request/add", [
+                        product_id: value.product_id,
+                        new_status: newStatus,
+                        new_price: newPrice
+                ], ['Authorization': "Basic " + encoding])
+                println(response)
 
-                if(value.new_price) {
-                    updateSql && (updateSql = "$updateSql, ")
-                    Double newPrice = Double.parseDouble(value.new_price.toString())
-                    updateSql = "$updateSql `price`='$newPrice'"
-                }
-                updateSql = "UPDATE `sr_product` SET $updateSql WHERE  `product_id`=${value.product_id};\n"
-                writer.write(updateSql)
             }
         }
-        File updateSqlFile = new File("c:\\MyDrive\\${NAME}.sql")
-        updateSqlFile.text = writer.toString()
-        println()
     }
 }

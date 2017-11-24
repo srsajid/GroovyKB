@@ -32,6 +32,10 @@ public class HttpUtil {
         return getResponseText(connection);
     }
 
+    public static String doPostRequest(String server, Map data, Map requestProperty = [:]) throws IOException {
+        doPostRequest(server, serializeMap(data), requestProperty)
+    }
+
     public static String getResponseText(URLConnection conn) throws IOException {
         StringBuffer answer = new StringBuffer();
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -43,7 +47,7 @@ public class HttpUtil {
         return answer.toString();
     }
 
-    public static serializeMap(Map map) {
+    public static String serializeMap(Map map) {
         if(map.size() == 0) {
             return 0;
         }
@@ -51,7 +55,7 @@ public class HttpUtil {
         map.each {
             builder.append("&" + it.key + "=")
             if(it.value) {
-                builder.append(URLEncoder.encode(it.value, "UTF8"))
+                builder.append(URLEncoder.encode(it.value.toString(), "UTF8"))
             }
         }
         return builder.toString().substring(1)
