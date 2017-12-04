@@ -32,7 +32,11 @@ class DB {
             while (resultSet.next()) {
                 Map map = [:]
                 for (int i = 1; i <= noOfColumn; i++) {
-                    map.put(metaData.getColumnName(i), resultSet.getString(i))
+                    String value = null
+                    try {
+                        value = resultSet.getString(i)
+                    } catch (Exception ex) {}
+                    map.put(metaData.getColumnName(i), value)
                 }
                 list.add(map)
             }

@@ -109,7 +109,7 @@ public class JSoupTest {
 
     public static void CrawlCategories() {
         List categoryURLs = [
-                "https://ryanscomputers.com/tablet-pc/all-brands.html",
+                "https://ryanscomputers.com/office-equipment/projector.html",
         ]
         ExecutorService executor = Executors.newFixedThreadPool(6);
         MyMonitorThread monitor = new MyMonitorThread(executor, 5);
@@ -128,7 +128,6 @@ public class JSoupTest {
     }
 
     public static void main(String[] args) {
-        CrawlCategories()
         crawler()
     }
 }

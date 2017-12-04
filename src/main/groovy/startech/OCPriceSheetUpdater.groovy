@@ -9,8 +9,7 @@ import org.apache.poi.ss.usermodel.CellType
 import util.DB
 
 class OCPriceSheetUpdater {
-    final private static int PARENT_CATEGORY = 237;
-    final private static String NAME = "tab";
+    final private static String NAME = "Hard Disk Drive-Price Sheet- 30-11-17";
     final private static String host = "http://www.startech.com.bd/";
     final private static String operatorEmail = "sajid@startechbd.com";
     final private static String operatorPass = "ASDFG;lkjh";
