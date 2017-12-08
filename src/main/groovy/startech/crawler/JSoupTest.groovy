@@ -58,7 +58,6 @@ public class JSoupTest {
     }
 
     static void crawlCategory(String categoryURL) {
-        println("Crawling Category: ${categoryURL}")
         List<String> productURLs = []
         Document doc = Jsoup.connect(categoryURL).get();
         while (doc) {
@@ -109,6 +108,11 @@ public class JSoupTest {
 
     public static void CrawlCategories() {
         List categoryURLs = [
+                "https://ryanscomputers.com/audio-video/earphone.html",
+                "https://ryanscomputers.com/audio-video/headphone.html",
+                "https://ryanscomputers.com/audio-video/speaker.html",
+                "https://ryanscomputers.com/accessories/mouse.html",
+                "https://ryanscomputers.com/accessories/keyboard.html",
                 "https://ryanscomputers.com/office-equipment/projector.html",
         ]
         ExecutorService executor = Executors.newFixedThreadPool(6);
@@ -128,6 +132,6 @@ public class JSoupTest {
     }
 
     public static void main(String[] args) {
-        crawler()
+        CrawlCategories()
     }
 }

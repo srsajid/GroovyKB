@@ -1,15 +1,16 @@
 package startech
 
 import http.HttpUtil
+import org.apache.commons.lang.math.NumberUtils
 import org.apache.poi.hssf.usermodel.HSSFCell
 import org.apache.poi.hssf.usermodel.HSSFRow
 import org.apache.poi.hssf.usermodel.HSSFSheet
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.CellType
+import org.apache.poi.ss.usermodel.Row
 import util.DB
 
 class OCPriceSheetUpdater {
-    final private static String NAME = "Hard Disk Drive-Price Sheet- 30-11-17";
     final private static String host = "http://www.startech.com.bd/";
     final private static String operatorEmail = "sajid@startechbd.com";
     final private static String operatorPass = "ASDFG;lkjh";
@@ -33,7 +34,7 @@ class OCPriceSheetUpdater {
         return cellValues
     }
 
-    static List readXLSSheet(HSSFSheet sheet) {
+    static List readXLSSheet(HSSFSheet sheet, String fileName) {
         Iterator rows = sheet.rowIterator();
         List rowValues = []
         List<String> headers = []
@@ -43,30 +44,39 @@ class OCPriceSheetUpdater {
                 headers.add(header.toLowerCase().replaceAll("\\s", "_"))
             }
         }
-
+        if(headers.size() < 6) {
+            println("Invalid Sheet Header. Sheet name: ${sheet.sheetName}, File Name: ${fileName}")
+            return rowValues
+        }
         while (rows.hasNext()) {
             Map rowValue = [:]
-            List row = readXLSRow(rows.next());
-            if(row.size() < 6) {
-                println("Invalid Row: " + row.toString())
+            Row row = rows.next()
+            List rowAsList = readXLSRow(row);
+            if(rowAsList.size() < 6) {
+                println("Invalid Row - File name: ${fileName}, Sheet Name: ${sheet.sheetName}, Row no: ${row.getRowNum()} ." + rowAsList.toString())
                 continue
             }
-            row.eachWithIndex { Object entry, int i ->
+            rowAsList.eachWithIndex { Object entry, int i ->
                 String key = headers[i]
                 key && (rowValue[key] = entry)
             }
+            if(rowValue.new_price && !NumberUtils.isNumber(rowValue.new_price.toString())) {
+                println("Invalid Row - File name: ${fileName}, Sheet Name: ${sheet.sheetName}, Row no: ${row.getRowNum()} ." + rowAsList.toString())
+                continue
+            }
             rowValues.add(rowValue)
         }
-        rowValues
+        return rowValues
     }
 
-    static Map readXLSFile(InputStream ExcelFileToRead) throws IOException {
+    static Map readXLSFile(File file) throws IOException {
+        InputStream ExcelFileToRead = new FileInputStream(file)
         Map sheetIndex = [:]
         HSSFWorkbook wb = new HSSFWorkbook(ExcelFileToRead);
         Iterator<HSSFSheet> iterator = wb.iterator()
         while (iterator.hasNext()) {
             HSSFSheet sheet = iterator.next()
-            sheetIndex[sheet.getSheetName()] = readXLSSheet(sheet)
+            sheetIndex[sheet.getSheetName()] = readXLSSheet(sheet, file.name)
 
         }
         return sheetIndex
@@ -88,16 +98,8 @@ class OCPriceSheetUpdater {
 
     }
 
-    static void main(String[] args) {
-        String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$operatorPass".getBytes());
-        DB db = new DB("startech");
-        Map stockStatusIndex = [:]
-        db.getResult("select * from sr_stock_status").each {
-            String name = it.name.trim()
-            name = name.toLowerCase().replaceAll("\\s+", "_")
-            stockStatusIndex[name] = it.stock_status_id
-        }
-        Map<String, List> map = readXLSFile(new FileInputStream("C:\\MyDrive\\${NAME}.xls"))
+    static void update(File exlFile, DB db, Map stockStatusIndex, String encoding) {
+        Map<String, List> map = readXLSFile(exlFile)
         StringWriter writer = new StringWriter();
         map.each { String key, List<Map> values ->
             values.each { Map value ->
@@ -119,6 +121,20 @@ class OCPriceSheetUpdater {
                 println(response)
 
             }
+        }
+
+    }
+    static void main(String[] args) {
+        String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$operatorPass".getBytes());
+        DB db = new DB("startech");
+        Map stockStatusIndex = [:]
+        db.getResult("select * from sr_stock_status").each {
+            String name = it.name.trim()
+            name = name.toLowerCase().replaceAll("\\s+", "_")
+            stockStatusIndex[name] = it.stock_status_id
+        }
+        new File("C:\\MyDrive\\PriceUpdate\\").eachFile {
+            update(it, db, stockStatusIndex, encoding)
         }
     }
 }

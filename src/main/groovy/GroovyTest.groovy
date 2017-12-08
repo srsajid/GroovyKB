@@ -111,13 +111,6 @@ class GroovyTest {
     }
 
     static void main(String[] args) {
-        String text = new File("D:\\codes\\extreme\\extreme_v3\\webcommander\\grails-app\\conf\\application.yml").text
-      File plugins = new File("D:\\codes\\extreme\\extreme_v3\\wc-plugins")
-        plugins.eachDir {
-            if (new File(it, "grails-app\\conf\\application.yml").exists()) {
-                new File(it, "grails-app\\conf\\application.yml").text = text
-            }
-        }
     }
 }
 
