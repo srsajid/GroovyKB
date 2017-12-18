@@ -3,8 +3,8 @@ package serial.com;
 public class SMSTest {
 
     static send(SMS sms) {
-        File contactFile = new File("C:\\Users\\srsaj\\Desktop\\Bulk\\Bulk-Mobile-number.csv")
-        String mgs = "Dear concern,\nTo make BCS more beneficial toward ICT professionals, please cast your vote\n\"Afifuz Zaman Ezaz\"\nCouncilor (Dr.Sohel - Tofayel) panel\nBallot#52";
+        File contactFile = new File("C:\\Users\\srsaj\\Desktop\\Bulk\\prof.csv")
+        String mgs = "Please cast your vote for Vice President(Admin)Prof Dr Mohammad Shorif Uddin,Ex Chair, CSE Jahangirnagar University from Dr Sohel-Tofayel Panel in BCS Election";
         String failed = ""
         contactFile.eachLine {
             Boolean result = sms.send(it.trim(), mgs)
@@ -30,8 +30,8 @@ public class SMSTest {
     }
 
     public static void main(String[] args) {
-        SMS sms = new SMS("COM7")
-        sms.send("01672178618", "HEllo")
+        SMS sms = new SMS("COM14")
+        send(sms)
         sms.closePort()
     }
 }

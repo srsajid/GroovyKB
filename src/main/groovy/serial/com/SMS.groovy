@@ -29,7 +29,7 @@ class SMS {
         serialPort.writeString("AT+CMGS=\"${number}\"\r")
         Thread.sleep(1000);
         serialPort.writeString(message + Character.toString((char) 26) + "\r");
-        Thread.sleep(5000);
+        Thread.sleep(6000);
         String response  = new String(serialPort.readBytes());
         println(response)
         return response.endsWith("\r\nOK\r\n")

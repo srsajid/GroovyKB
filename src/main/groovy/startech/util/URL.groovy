@@ -35,6 +35,6 @@ public class URL {
                 }
             }
         }
-        return 'http://www.startech.com.bd' + $url
+        return 'https://www.startech.com.bd' + $url
     }
 }
