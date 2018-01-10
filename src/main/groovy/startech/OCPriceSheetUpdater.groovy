@@ -11,7 +11,7 @@ import org.apache.poi.ss.usermodel.Row
 import util.DB
 
 class OCPriceSheetUpdater {
-    final private static String host = "http://www.startech.com.bd/";
+    final private static String host = "https://www.startech.com.bd/";
     final private static String operatorEmail = "sajid@startechbd.com";
     final private static String operatorPass = "ASDFG;lkjh";
 
@@ -52,7 +52,7 @@ class OCPriceSheetUpdater {
             Map rowValue = [:]
             Row row = rows.next()
             List rowAsList = readXLSRow(row);
-            if(rowAsList.size() < 6) {
+            if(rowAsList.size() < 8) {
                 println("Invalid Row - File name: ${fileName}, Sheet Name: ${sheet.sheetName}, Row no: ${row.getRowNum()} ." + rowAsList.toString())
                 continue
             }
@@ -61,6 +61,11 @@ class OCPriceSheetUpdater {
                 key && (rowValue[key] = entry)
             }
             if(rowValue.new_price && !NumberUtils.isNumber(rowValue.new_price.toString())) {
+                println("Invalid Row - File name: ${fileName}, Sheet Name: ${sheet.sheetName}, Row no: ${row.getRowNum()} ." + rowAsList.toString())
+                continue
+            }
+
+            if(rowValue.new_sort_order && !NumberUtils.isNumber(rowValue.new_sort_order.toString())) {
                 println("Invalid Row - File name: ${fileName}, Sheet Name: ${sheet.sheetName}, Row no: ${row.getRowNum()} ." + rowAsList.toString())
                 continue
             }
@@ -84,6 +89,10 @@ class OCPriceSheetUpdater {
 
     static Boolean skip(Map product) {
         if(product.new_price) {
+            return false
+        }
+
+        if(product.new_sort_order) {
             return false
         }
 
@@ -113,10 +122,13 @@ class OCPriceSheetUpdater {
                     newStatus = stockStatusIndex[newStatus]
                 }
                 Double newPrice = value.new_price ? Double.parseDouble(value.new_price.toString()) : null
+                Integer newSortOrder = value.new_sort_order ? Double.parseDouble(value.new_sort_order.toString()) : null
+
                 String response = HttpUtil.doPostRequest("${host}index.php?route=operator/product_update_request/add", [
                         product_id: value.product_id,
                         new_status: newStatus,
-                        new_price: newPrice
+                        new_price: newPrice,
+                        new_sort_order: newSortOrder
                 ], ['Authorization': "Basic " + encoding])
                 println(response)
 
