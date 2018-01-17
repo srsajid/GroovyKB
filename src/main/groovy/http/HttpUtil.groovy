@@ -27,6 +27,10 @@ public class HttpUtil {
         return conn
     }
 
+    public static URLConnection getPostConnection(String server, Map data, Map requestProperty = [:]) throws IOException {
+        return getPostConnection(server, serializeMap(data), requestProperty)
+    }
+
     public static String doPostRequest(String server, String data, Map requestProperty = [:]) throws IOException {
         URLConnection connection = getPostConnection(server, data, requestProperty)
         return getResponseText(connection);
@@ -52,10 +56,19 @@ public class HttpUtil {
             return 0;
         }
         StringBuilder builder = new StringBuilder()
-        map.each {
-            builder.append("&" + it.key + "=")
-            if(it.value) {
-                builder.append(URLEncoder.encode(it.value.toString(), "UTF8"))
+        map.each {key, value ->
+            if(value instanceof List) {
+                value.each {
+                    builder.append("&" + key + "=")
+                    if(it) {
+                        builder.append(URLEncoder.encode(it.toString(), "UTF8"))
+                    }
+                }
+            } else {
+                builder.append("&" + key + "=")
+                if(value) {
+                    builder.append(URLEncoder.encode(value.toString(), "UTF8"))
+                }
             }
         }
         return builder.toString().substring(1)
