@@ -10,6 +10,7 @@ import util.DB
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 
 public class JSoupTest {
@@ -117,6 +118,7 @@ public class JSoupTest {
             executor.execute({
                 try {
                     crawlCategory(url)
+                    println("Im done")
                 } catch (Exception ex) {
                     println("Category URL: "  + url + "\nMessage: "  + ex.message + "\n----------------------------------------------")
                 }
@@ -126,6 +128,6 @@ public class JSoupTest {
     }
 
     public static void main(String[] args) {
-        crawler()
+        CrawlCategories()
     }
 }

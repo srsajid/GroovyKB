@@ -31,8 +31,8 @@ public class SMSTest {
     }
 
     public static void main(String[] args) {
-        SMS sms = new SMS("COM14")
-        send(sms)
+        SMS sms = new SMS("COM3")
+        sms.read()
         sms.closePort()
     }
 }

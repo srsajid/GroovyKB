@@ -9,6 +9,7 @@ import org.apache.logging.log4j.core.util.FileUtils
 import org.codehaus.groovy.runtime.GStringImpl
 import org.codehaus.groovy.runtime.callsite.CallSite
 import org.springframework.util.FileCopyUtils
+import org.springframework.web.util.UriUtils
 import zip.ZipUtil
 
 import java.util.regex.Matcher
@@ -111,6 +112,7 @@ class GroovyTest {
     }
 
     static void main(String[] args) {
+        println UriUtils.encodePath("hello world", "UTF-8")
     }
 }
 

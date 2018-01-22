@@ -49,12 +49,12 @@ public class SiteMapGenerator {
     }
 
     def generate() {
-        def writer = new FileWriter("c:\\MyDrive\\sitemap.xml")
+        def writer = new FileWriter("D:\\sitemap.xml")
         def xml = new MarkupBuilder(writer)
         xml.mkp.xmlDeclaration(version: "1.0", encoding: "utf-8")
         xml.urlset(xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9") {
             url {
-                loc("http://www.startech.com.bd/")
+                loc("https://www.startech.com.bd/")
                 priority("1")
                 changefreq('weekly')
             }
