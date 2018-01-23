@@ -23,7 +23,17 @@ public class LocalDatabaseUpdater {
                         "sr_url_alias",
                         "sr_product_special",
                         "sr_product_to_category",
-                        "sr_stock_status"
+                        "sr_stock_status",
+                        "sr_order",
+                        "sr_order_custom_field",
+                        "sr_order_history",
+                        "sr_order_product",
+                        "sr_order_option",
+                        "sr_order_recurring",
+                        "sr_order_recurring_transaction",
+                        "sr_order_status",
+                        "sr_order_total",
+                        "sr_order_voucher"
                 ]
         ], ['Authorization': "Basic " + encoding]).inputStream
 
