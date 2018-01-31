@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 public class MultiMediaKingdom {
-    static db = new DB("price_comapre");
+    static db = new DB("price_compare_dev");
     static ConcurrentHashMap<String, Integer> failedCount = new ConcurrentHashMap<String, Integer> ()
 
     static List getAllProductURLs(Document categoryDoc) {
@@ -29,14 +29,12 @@ public class MultiMediaKingdom {
 
     static crawlProduct(String productUrl) {
         Document productDoc = Jsoup.connect(productUrl).get();
-        String name = productDoc.select(".product-title")[0]?.text()?.trim()
-        String code = productDoc.select("[itemscope].product").attr("id")?.trim()
-        String price = productDoc.select(".price .amount")[0]?.text()?.trim()
-        if(price) {
-            price = price.replace('৳', "").replaceAll("[A-Za-z,]", "").trim()
-        }
-        String model = productDoc.select(".wd_product_sku")[0]?.text()?.trim() ?: ""
-        model = model.replace("Sku: ", "")
+        String name = productDoc.select(".summary.entry-summary [itemprop=name]")[0]?.text()?.trim()
+        String code = productDoc.select(".summary.entry-summary .product_detail [name=add-to-cart]").val()?.trim()
+        String price = productDoc.select(".summary.entry-summary [itemprop=price]")[0]?.attr("content")?.trim()
+
+        String model = productDoc.select(".summary.entry-summary .product_sku.sku")[0]?.text()?.trim() ?: ""
+        if(!price) { return }
         Integer result = db.insert("INSERT INTO `mk_product` (`name`, `code`, `model`, `url`, `price`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `updated` = now()", [name, code, model, productUrl, price, name, model, productUrl, price])
 //        if(result) {
 //            println("Product save succes: $code")

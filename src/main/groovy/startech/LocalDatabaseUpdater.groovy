@@ -13,7 +13,10 @@ public class LocalDatabaseUpdater {
     final private static String operatorPass = "";
 
     synchronized void updateDatabase() {
-        String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$operatorPass".getBytes());
+        Scanner scanner = new Scanner(System.in);
+        print("Enter Pass:")
+        String password = scanner.nextLine();
+        String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$password".getBytes());
         InputStream inputStream = HttpUtil.getPostConnection("${host}index.php?route=tool/backup/backup", [
                 "backup[]": [
                         "sr_product",
@@ -33,7 +36,13 @@ public class LocalDatabaseUpdater {
                         "sr_order_recurring_transaction",
                         "sr_order_status",
                         "sr_order_total",
-                        "sr_order_voucher"
+                        "sr_order_voucher",
+                        "sr_attribute",
+                        "sr_attribute_description",
+                        "sr_attribute_group",
+                        "sr_attribute_group_description",
+                        "sr_attribute_profile",
+                        "sr_product_attribute"
                 ]
         ], ['Authorization': "Basic " + encoding]).inputStream
 

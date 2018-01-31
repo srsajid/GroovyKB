@@ -1,6 +1,6 @@
 package startech.crawler
 
-import org.jsoup.Jsoup;
+import org.jsoup.helper.SRHttpConnection;
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.jsoup.nodes.Element
@@ -10,19 +10,18 @@ import util.DB
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.Future
 
 
 public class JSoupTest {
-    static db = new DB("price_compare");
-    static ConcurrentHashMap<String, Integer> failedCount = new ConcurrentHashMap<String, Integer> ()
+    static db = new DB("price_compare_dev");
+    static ConcurrentHashMap<String, Integer> failedCount = new ConcurrentHashMap<String, Integer>()
 
     static List getAllProductURLs(Document categoryDoc) {
         List<String> productURLs = []
         Elements products = categoryDoc.select(".products-grid > li");
         for (Element product : products) {
             Element name = product.select(".product-name a")[0]
-            if(name) {
+            if (name) {
                 productURLs.add(name.attr("href"))
             }
         }
@@ -30,13 +29,13 @@ public class JSoupTest {
     }
 
     static crawlProduct(String productUrl) {
-        Document productDoc = Jsoup.connect(productUrl).get();
+        Document productDoc = SRHttpConnection.connect(productUrl).get();
         Elements specs = productDoc.select("#product-attribute-specs-table tr");
         String name = productDoc.select(".product-essential .product-name h2")[0]?.text()?.trim()
         String code = productDoc.select(".product-essential .productsku span")[0]?.text()?.trim()
         String price = productDoc.select(".product-essential .regular-price .price")[0]?.text()?.trim()
         price = price ?: productDoc.select(".product-essential .special-price .price")[0]?.text()?.trim()
-        if(price) {
+        if (price) {
             price = price.replaceAll("[A-Za-z,]", "")
         }
         String model = ""
@@ -45,39 +44,39 @@ public class JSoupTest {
             Element spec = iter.next();
             String label = spec.select(".label")[0]?.text()?.trim()
             String value = spec.select(".data")[0]?.text()?.trim()
-            if(label == "Model") {
+            if (label == "Model") {
                 model = value
                 break
             }
         }
         Integer result = db.insert("INSERT INTO `ryans_product` (`name`, `code`, `model`, `url`, `price`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `updated` = now()", [name, code, model, productUrl, price, name, model, productUrl, price])
-        if(result) {
-//            println("Product save succes: $code")
+        if (result) {
+            println("Product save succes: $code")
         } else {
-//            println("Product save failed: $code")
+            println("Product save failed: $code")
         }
     }
 
     static void crawlCategory(String categoryURL) {
         List<String> productURLs = []
-        Document doc = Jsoup.connect(categoryURL).get();
+        Document doc = SRHttpConnection.connect(categoryURL).get();
         while (doc) {
             productURLs.addAll(getAllProductURLs(doc))
             Element nextPage = doc.select(".pages .next.i-next")[0]
             String nextPageURL = nextPage ? nextPage.attr("href") : null
-            doc = nextPageURL ? Jsoup.connect(nextPageURL).get() : null
+            doc = nextPageURL ? SRHttpConnection.connect(nextPageURL).get() : null
         }
         productURLs.each {
             try {
                 crawlProduct(it)
             } catch (Exception ex) {
-                println("Product URL: "  + it + "\nMessage: "  + ex.message + "\n----------------------------------------------")
+                println("Product URL: " + it + "\nMessage: " + ex.message + "\n----------------------------------------------")
             }
         }
     }
 
     static void crawler() {
-        Document doc = Jsoup.connect("https://ryanscomputers.com/").get();
+        Document doc = SRHttpConnection.connect("https://ryanscomputers.com/").get();
         Elements menus = doc.select("ul.sm_megamenu_menu > li.other-toggle")
         menus.remove(0)
         List<String> categoryURLs = []
@@ -85,13 +84,13 @@ public class JSoupTest {
             it.select("a").each {
                 String url = it.attr("href").trim()
                 if (url.startsWith("http")) {
-                    categoryURLs.add( url)
+                    categoryURLs.add(url)
                 }
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(5);
-        MyMonitorThread monitor = new MyMonitorThread(executor, 3);
+        ExecutorService executor = Executors.newFixedThreadPool(30);
+        MyMonitorThread monitor = new MyMonitorThread(executor, 15);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
         categoryURLs.each { url ->
@@ -99,7 +98,7 @@ public class JSoupTest {
                 try {
                     crawlCategory(url)
                 } catch (Exception ex) {
-                    println("Category URL: "  + url + "\nMessage: "  + ex.message + "\n----------------------------------------------")
+                    println("Category URL: " + url + "\nMessage: " + ex.message + "\n----------------------------------------------")
                 }
             })
         }
@@ -108,9 +107,11 @@ public class JSoupTest {
 
     public static void CrawlCategories() {
         List categoryURLs = [
-                "https://ryanscomputers.com/laptop-notebook.html"
+                "https://ryanscomputers.com/accessories/keyboard/a4-tech.html",
+                "https://ryanscomputers.com/accessories/mouse/a4-tech.html",
+                "https://ryanscomputers.com/audio-video/headphone/a4-tech.html"
         ]
-        ExecutorService executor = Executors.newFixedThreadPool(6);
+        ExecutorService executor = Executors.newFixedThreadPool(1);
         MyMonitorThread monitor = new MyMonitorThread(executor, 5);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
@@ -120,7 +121,7 @@ public class JSoupTest {
                     crawlCategory(url)
                     println("Im done")
                 } catch (Exception ex) {
-                    println("Category URL: "  + url + "\nMessage: "  + ex.message + "\n----------------------------------------------")
+                    println("Category URL: " + url + "\nMessage: " + ex.message + "\n----------------------------------------------")
                 }
             })
         }
@@ -128,6 +129,6 @@ public class JSoupTest {
     }
 
     public static void main(String[] args) {
-        CrawlCategories()
+        crawler()
     }
 }
