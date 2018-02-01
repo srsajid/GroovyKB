@@ -1,6 +1,6 @@
 package startech.crawler
 
-import org.jsoup.Jsoup
+import org.jsoup.helper.SRHttpConnection
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -28,7 +28,7 @@ public class MultiMediaKingdom {
     }
 
     static crawlProduct(String productUrl) {
-        Document productDoc = Jsoup.connect(productUrl).get();
+        Document productDoc = SRHttpConnection.connect(productUrl).get();
         String name = productDoc.select(".summary.entry-summary [itemprop=name]")[0]?.text()?.trim()
         String code = productDoc.select(".summary.entry-summary .product_detail [name=add-to-cart]").val()?.trim()
         String price = productDoc.select(".summary.entry-summary [itemprop=price]")[0]?.attr("content")?.trim()
@@ -46,12 +46,12 @@ public class MultiMediaKingdom {
     static void crawlCategory(String categoryURL) {
         println("Crawling Category: ${categoryURL}")
         List<String> productURLs = []
-        Document doc = Jsoup.connect(categoryURL).get();
+        Document doc = SRHttpConnection.connect(categoryURL).get();
         while (doc) {
             productURLs.addAll(getAllProductURLs(doc))
             Element nextPage = doc.select(".next.page-numbers")[0]
             String nextPageURL = nextPage ? nextPage.attr("href") : null
-            doc = nextPageURL ? Jsoup.connect(nextPageURL).get() : null
+            doc = nextPageURL ? SRHttpConnection.connect(nextPageURL).get() : null
         }
         productURLs.each {
             try {
@@ -86,7 +86,7 @@ public class MultiMediaKingdom {
     }
 
     static void crawler() {
-        Document doc = Jsoup.connect("http://multimediakingdom.com.bd/").get();
+        Document doc = SRHttpConnection.connect("http://multimediakingdom.com.bd/").get();
         Elements menus = doc.select("#menu-main li")
         menus.remove(0)
         List<String> categoryURLs = []
@@ -108,7 +108,7 @@ public class MultiMediaKingdom {
                 }
             }
         }
-        ExecutorService executor = Executors.newFixedThreadPool(15);
+        ExecutorService executor = Executors.newFixedThreadPool(50);
         MyMonitorThread monitor = new MyMonitorThread(executor, 3);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();

@@ -13,7 +13,7 @@ import java.util.concurrent.Executors
 
 
 public class JSoupTest {
-    static db = new DB("price_compare_dev");
+    static db = new DB("price_compare");
     static ConcurrentHashMap<String, Integer> failedCount = new ConcurrentHashMap<String, Integer>()
 
     static List getAllProductURLs(Document categoryDoc) {
@@ -89,7 +89,7 @@ public class JSoupTest {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(30);
+        ExecutorService executor = Executors.newFixedThreadPool(50);
         MyMonitorThread monitor = new MyMonitorThread(executor, 15);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();

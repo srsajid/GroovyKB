@@ -1,6 +1,7 @@
 package startech.crawler
 
 import org.jsoup.Jsoup
+import org.jsoup.helper.SRHttpConnection
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -14,7 +15,7 @@ class Village {
     static db = new DB("price_compare");
 
     static crawlProduct(String productUrl) {
-        Document productDoc = Jsoup.connect(productUrl).get();
+        Document productDoc = SRHttpConnection.connect(productUrl).get();
         Elements specs = productDoc.select("#specification tr");
         String name = productDoc.select(".titles .headinglefttitle")[0]?.text()?.trim()
         String code = productDoc.select("#review [name=product_id]")[0]?.val()?.trim()
@@ -56,12 +57,12 @@ class Village {
 
     static void crawlCategory(String categoryURL) {
         List<String> productURLs = []
-        Document doc = Jsoup.connect(categoryURL).get();
+        Document doc = SRHttpConnection.connect(categoryURL).get();
         while (doc) {
             productURLs.addAll(getAllProductURLs(doc))
             Element nextPage = doc.select(".productlistpage .pagination .next a")[0]
             String nextPageURL = nextPage ? nextPage.attr("href") : null
-            doc = nextPageURL ? Jsoup.connect(nextPageURL).get() : null
+            doc = nextPageURL ? SRHttpConnection.connect(nextPageURL).get() : null
         }
         productURLs.each {
             try {
@@ -73,7 +74,7 @@ class Village {
     }
 
     static void crawler() {
-        Document doc = Jsoup.connect("http://village-bd.com/").get();
+        Document doc = SRHttpConnection.connect("http://village-bd.com/").get();
         Elements menus = doc.select("#mainmenu ul.navul > li.dropdown:not(.home,.service,.weekly-hot)")
         menus.remove(0)
         List<String> categoryURLs = []
@@ -86,7 +87,7 @@ class Village {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(1);
+        ExecutorService executor = Executors.newFixedThreadPool(50);
         MyMonitorThread monitor = new MyMonitorThread(executor, 3);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
@@ -130,6 +131,7 @@ class Village {
 
     public static void main(String[] args) {
 //        crawlCategory("http://village-bd.com/category/archive/laptops-notebooks") //387
-        CrawlCategories()
+//        CrawlCategories()
+        crawler()
     }
 }
