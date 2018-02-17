@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 public class Pickaboo {
-    static db = new DB("price_compare");
+    static db = new DB("price_compare_dev");
     static ConcurrentHashMap<String, Integer> failedCount = new ConcurrentHashMap<String, Integer> ()
 
     static List getAllProductURLs(Document categoryDoc) {
@@ -66,9 +66,9 @@ public class Pickaboo {
 
     public static void CrawlCategories() {
         List categoryURLs = [
+                "https://www.pickaboo.com/computer-pc/laptop-notebook.html",
                 "https://www.pickaboo.com/computer-pc/computer-accessories.html",
                 "https://www.pickaboo.com/computer-pc/desktop-computer.html",
-                "https://www.pickaboo.com/computer-pc/laptop-notebook.html",
                 "https://www.pickaboo.com/computer-pc/apple-mac.html",
                 "https://www.pickaboo.com/computer-pc/apple-accessories.html",
         ]

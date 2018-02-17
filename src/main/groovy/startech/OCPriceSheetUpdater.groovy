@@ -12,21 +12,21 @@ import util.DB
 
 class OCPriceSheetUpdater {
     final private static String host = "https://www.startech.com.bd/";
-    final private static String operatorEmail = "sajid@startechbd.com";
+    final private static String operatorEmail = "administrator@startech.com.bd";
     final private static String operatorPass = "ASDFG;lkjh";
 
 
-    static List readXLSRow(HSSFRow row) {
+    static Map readXLSRow(HSSFRow row) {
         Iterator cells = row.cellIterator();
-        List<Object> cellValues = []
+        Map<Integer, Object> cellValues = [:]
         while (cells.hasNext()) {
             HSSFCell cell = (HSSFCell) cells.next();
             if (cell.getCellTypeEnum() == CellType.STRING) {
-                cellValues.add(cell.getStringCellValue().trim())
+                cellValues.put(cell.columnIndex, cell.getStringCellValue().trim())
             } else if (cell.getCellTypeEnum() == CellType.NUMERIC) {
-                cellValues.add(cell.getNumericCellValue())
+                cellValues.put(cell.columnIndex, cell.getNumericCellValue())
             } else if(cell.getCellTypeEnum() == CellType.BLANK){
-                cellValues.add("")
+                cellValues.put(cell.columnIndex, "")
             } else {
                 println("Invalid Cell")
             }
@@ -37,26 +37,19 @@ class OCPriceSheetUpdater {
     static List readXLSSheet(HSSFSheet sheet, String fileName) {
         Iterator rows = sheet.rowIterator();
         List rowValues = []
-        List<String> headers = []
+        Map<Integer, String> headers = [:]
         if(rows.hasNext()) {
-            readXLSRow(rows.next()).each {
-                String header = it.toString()
-                headers.add(header.toLowerCase().replaceAll("\\s", "_"))
+            readXLSRow(rows.next()).each {key, value ->
+                String header = value.toString()
+                headers.put(key, header.toLowerCase().replaceAll("\\s", "_"))
             }
         }
-        if(headers.size() < 6) {
-            println("Invalid Sheet Header. Sheet name: ${sheet.sheetName}, File Name: ${fileName}")
-            return rowValues
-        }
+
         while (rows.hasNext()) {
             Map rowValue = [:]
             Row row = rows.next()
-            List rowAsList = readXLSRow(row);
-            if(rowAsList.size() < 8) {
-                println("Invalid Row - File name: ${fileName}, Sheet Name: ${sheet.sheetName}, Row no: ${row.getRowNum()} ." + rowAsList.toString())
-                continue
-            }
-            rowAsList.eachWithIndex { Object entry, int i ->
+            Map rowAsList = readXLSRow(row);
+            rowAsList.each {int i, Object entry ->
                 String key = headers[i]
                 key && (rowValue[key] = entry)
             }
@@ -107,7 +100,7 @@ class OCPriceSheetUpdater {
 
     }
 
-    static void update(File exlFile, DB db, Map stockStatusIndex, String encoding) {
+    static void update(File exlFile, Map stockStatusIndex, String encoding) {
         Map<String, List> map = readXLSFile(exlFile)
         StringWriter writer = new StringWriter();
         map.each { String key, List<Map> values ->
@@ -146,7 +139,7 @@ class OCPriceSheetUpdater {
             stockStatusIndex[name] = it.stock_status_id
         }
         new File("C:\\MyDrive\\PriceUpdate\\").eachFile {
-            update(it, db, stockStatusIndex, encoding)
+            update(it, stockStatusIndex, encoding)
         }
     }
 }
