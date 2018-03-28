@@ -89,7 +89,7 @@ public class JSoupTest {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(30);
+        ExecutorService executor = Executors.newFixedThreadPool(40);
         MyMonitorThread monitor = new MyMonitorThread(executor, 15);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
@@ -127,6 +127,6 @@ public class JSoupTest {
     }
 
     public static void main(String[] args) {
-        CrawlCategories()
+        crawler()
     }
 }

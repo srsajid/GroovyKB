@@ -23,7 +23,7 @@ import groovy.transform.CompileStatic
 class ClosureCompilerProcessor {
 	static contentTypes = ['application/javascript']
 
-
+	static version = 1;
 	ClosureCompilerProcessor() {
 
 
@@ -31,10 +31,13 @@ class ClosureCompilerProcessor {
 
 	public static void main(String[] args) {
 		CommandLineRunner.main("--js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\jquery\\jquery-2.1.1.min.js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\bootstrap\\js\\bootstrap.js",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\common.js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\operator.js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\search_suggestion.js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\startech\\javascript\\site.js",
 				"--js_output_file",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\common.min.js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\startech\\javascript\\$version\\site.min.js",
 				"--debug",
 		)
 	}

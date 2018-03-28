@@ -47,21 +47,21 @@ public class LocalDatabaseUpdater {
             "sr_url_alias"
     ]
 
-    synchronized void updateDatabase() {
+    synchronized void updateDatabase(String database, String table) {
         Scanner scanner = new Scanner(System.in);
         print("Enter Pass:")
         String password = scanner.nextLine();
         String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$password".getBytes());
         InputStream inputStream = HttpUtil.getPostConnection("${host}index.php?route=tool/backup/backup", [
-                "backup[]": tableList2
+                "backup[]": table == "advance" ? tableList1 : tableList2
         ], ['Authorization': "Basic " + encoding]).inputStream
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new InputStreamResource(inputStream))
-        populator.populate(new DB("price_compare").getConnection())
+        populator.populate(new DB(database).getConnection())
     }
 
     public static void main(String[] args) {
-        new LocalDatabaseUpdater().updateDatabase()
+        new LocalDatabaseUpdater().updateDatabase(args[0], args[1])
     }
 }
