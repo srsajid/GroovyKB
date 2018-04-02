@@ -1,5 +1,6 @@
 package minifier
 
+import com.google.javascript.jscomp.ClosureCompilerProcessor
 import minifier.util.FileNameUtils
 
 
