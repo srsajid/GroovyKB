@@ -107,11 +107,11 @@ public class JSoupTest {
 
     public static void CrawlCategories() {
         List categoryURLs = [
-                "https://ryanscomputers.com/laptop-notebook.html",
-                "https://ryanscomputers.com/components/processor.html",
-                "https://ryanscomputers.com/components/desktop-ram.html",
-                "https://ryanscomputers.com/components/mainboard.html",
-                "https://ryanscomputers.com/components/graphics-card.html",
+                "https://ryanscomputers.com/components/mainboard/filter/brand/asrock.html",
+                "https://ryanscomputers.com/components/mainboard/filter/brand/asus.html",
+                "https://ryanscomputers.com/components/mainboard/filter/brand/gigabyte.html",
+                "https://ryanscomputers.com/components/mainboard/filter/brand/msi.html",
+                "https://ryanscomputers.com/components/mainboard.html"
 
         ]
         ExecutorService executor = Executors.newFixedThreadPool(10);

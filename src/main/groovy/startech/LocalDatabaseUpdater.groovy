@@ -47,18 +47,24 @@ public class LocalDatabaseUpdater {
             "sr_url_alias"
     ]
 
+    static tableList3 = ["sr_customer", 'sr_order']
+
     synchronized void updateDatabase(String database, String table) {
         Scanner scanner = new Scanner(System.in);
         print("Enter Pass:")
         String password = scanner.nextLine();
         String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$password".getBytes());
-        InputStream inputStream = HttpUtil.getPostConnection("${host}index.php?route=tool/backup/backup", [
-                "backup[]": table == "advance" ? tableList1 : tableList2
-        ], ['Authorization': "Basic " + encoding]).inputStream
 
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new InputStreamResource(inputStream))
-        populator.populate(new DB(database).getConnection())
+        List tables = table == "advance" ? tableList1 : tableList2
+        tableList3.each {
+            InputStream inputStream = HttpUtil.getPostConnection("${host}index.php?route=tool/backup/backup", [
+                    "backup[]": it
+            ], ['Authorization': "Basic " + encoding]).inputStream
+
+            ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+            populator.addScript(new InputStreamResource(inputStream))
+            populator.populate(new DB(database).getConnection())
+        }
     }
 
     public static void main(String[] args) {
