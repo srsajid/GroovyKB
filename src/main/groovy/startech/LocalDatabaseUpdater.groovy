@@ -56,7 +56,7 @@ public class LocalDatabaseUpdater {
         String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$password".getBytes());
 
         List tables = table == "advance" ? tableList1 : tableList2
-        tableList3.each {
+        tables.each {
             InputStream inputStream = HttpUtil.getPostConnection("${host}index.php?route=tool/backup/backup", [
                     "backup[]": it
             ], ['Authorization': "Basic " + encoding]).inputStream

@@ -7,7 +7,7 @@ import com.google.javascript.jscomp.CommandLineRunner
 class ClosureCompilerProcessor extends CommandLineRunner {
 	static contentTypes = ['application/javascript']
 
-	static version = 1;
+	static version = 2;
 
 	protected ClosureCompilerProcessor(String[] args) {
 		super(args)
@@ -25,7 +25,7 @@ class ClosureCompilerProcessor extends CommandLineRunner {
 				"--js_output_file",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\startech\\javascript\\$version\\site.min.js"
 		].toArray()
-//		new ClosureCompilerProcessor(args).run()
+		new ClosureCompilerProcessor(args).run()
 		args = [
 				"--js",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\jquery\\magnific\\jquery.magnific-popup.min.js",

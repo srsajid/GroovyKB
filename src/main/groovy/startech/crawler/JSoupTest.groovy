@@ -89,7 +89,7 @@ public class JSoupTest {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(30);
+        ExecutorService executor = Executors.newFixedThreadPool(10);
         MyMonitorThread monitor = new MyMonitorThread(executor, 15);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
@@ -107,6 +107,14 @@ public class JSoupTest {
 
     public static void CrawlCategories() {
         List categoryURLs = [
+                "https://ryanscomputers.com/laptop-notebook.html",
+                "https://ryanscomputers.com/laptop-notebook/filter/brand/acer.html",
+                "https://ryanscomputers.com/laptop-notebook/filter/brand/asus.html",
+                "https://ryanscomputers.com/laptop-notebook/filter/brand/dell.html",
+                "https://ryanscomputers.com/laptop-notebook/filter/brand/hp.html",
+                "https://ryanscomputers.com/laptop-notebook/filter/brand/lenovo.html",
+                "https://ryanscomputers.com/accessories.html",
+                "https://ryanscomputers.com/audio-video.html",
                 "https://ryanscomputers.com/components/mainboard/filter/brand/asrock.html",
                 "https://ryanscomputers.com/components/mainboard/filter/brand/asus.html",
                 "https://ryanscomputers.com/components/mainboard/filter/brand/gigabyte.html",

@@ -63,6 +63,7 @@ public class SMSTest {
     public static void main(String[] args) {
         DB db = new DB("test")
         String message = "Enjoy exciting offers of Pohela Boisakh @STAR TECH, get FREE HOME DELIVERY inside Dhaka by using promo code: 1425\nDetails:https://goo.gl/FhBGUh"
+        send("01672178618", message)
         List subscribers = db.getResult("select * from sms_subscriber where sent = 0")
         subscribers.each {
             if(send(it.number, message)) {
@@ -74,3 +75,5 @@ public class SMSTest {
         }
     }
 }
+
+
