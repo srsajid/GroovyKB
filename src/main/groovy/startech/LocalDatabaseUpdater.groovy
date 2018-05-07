@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 
 public class LocalDatabaseUpdater {
     final private static String host = "https://www.startech.com.bd/admin/";
-    final private static String operatorEmail = "startech";
+    final private static String operatorEmail = "srsajid";
     final private static String operatorPass = "";
 
     static tableList1 =  [
@@ -36,7 +36,9 @@ public class LocalDatabaseUpdater {
             "sr_attribute_group",
             "sr_attribute_group_description",
             "sr_attribute_profile",
-            "sr_product_attribute"
+            "sr_product_attribute",
+            "sr_manufacturer",
+            "sr_manufacturer_description"
     ]
 
     static tableList2 = [
