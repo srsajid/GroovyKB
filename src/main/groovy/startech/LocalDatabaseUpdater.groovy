@@ -51,13 +51,12 @@ public class LocalDatabaseUpdater {
 
     static tableList3 = ["sr_customer", 'sr_order']
 
-    synchronized void updateDatabase(String database, String table) {
+    synchronized void updateDatabase(String database, List tables) {
         Scanner scanner = new Scanner(System.in);
         print("Enter Pass:")
         String password = scanner.nextLine();
         String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$password".getBytes());
 
-        List tables = table == "advance" ? tableList1 : tableList2
         tables.each {
             InputStream inputStream = HttpUtil.getPostConnection("${host}index.php?route=tool/backup/backup", [
                     "backup[]": it
@@ -70,6 +69,7 @@ public class LocalDatabaseUpdater {
     }
 
     public static void main(String[] args) {
-        new LocalDatabaseUpdater().updateDatabase(args[0], args[1])
+        List tables = args[1] == "advance" ? tableList1 : tableList2
+        new LocalDatabaseUpdater().updateDatabase(args[0], tables)
     }
 }
