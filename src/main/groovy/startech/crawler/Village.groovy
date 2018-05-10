@@ -87,7 +87,7 @@ class Village {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(50);
+        ExecutorService executor = Executors.newFixedThreadPool(20);
         MyMonitorThread monitor = new MyMonitorThread(executor, 3);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();

@@ -23,7 +23,7 @@ class ClosureCompilerProcessor extends CommandLineRunner {
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\search_suggestion.js",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\startech\\javascript\\site.js",
 				"--js_output_file",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\startech\\javascript\\$version\\site.min.js"
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\startech\\javascript\\site.min.${version}.js"
 		].toArray()
 		new ClosureCompilerProcessor(args).run()
 		args = [
@@ -32,7 +32,7 @@ class ClosureCompilerProcessor extends CommandLineRunner {
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\operator.js",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\product.js",
 				"--js_output_file",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\product.min.js"
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\product.min.${version}.js"
 		]
 		new ClosureCompilerProcessor(args).run()
 

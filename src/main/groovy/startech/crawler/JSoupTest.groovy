@@ -107,6 +107,7 @@ public class JSoupTest {
 
     public static void CrawlCategories() {
         List categoryURLs = [
+                "https://ryanscomputers.com/network/router.html",
                 "https://ryanscomputers.com/laptop-notebook.html",
                 "https://ryanscomputers.com/laptop-notebook/filter/brand/acer.html",
                 "https://ryanscomputers.com/laptop-notebook/filter/brand/asus.html",
@@ -140,6 +141,6 @@ public class JSoupTest {
     }
 
     public static void main(String[] args) {
-        CrawlCategories()
+        crawler()
     }
 }
