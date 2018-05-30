@@ -38,7 +38,7 @@ public class LocalDatabaseUpdater {
             "sr_attribute_profile",
             "sr_product_attribute",
             "sr_manufacturer",
-            "sr_manufacturer_description"
+            "sr_manufacturer_description",
     ]
 
     static tableList2 = [
@@ -46,6 +46,7 @@ public class LocalDatabaseUpdater {
             "sr_product_description",
             "sr_category",
             "sr_category_description",
+            "sr_product_to_category",
             "sr_url_alias"
     ]
 
