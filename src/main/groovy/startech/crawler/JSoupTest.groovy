@@ -33,10 +33,13 @@ public class JSoupTest {
         Elements specs = productDoc.select("#product-attribute-specs-table tr");
         String name = productDoc.select(".product-essential .product-name h2")[0]?.text()?.trim()
         String code = productDoc.select(".product-essential .productsku span")[0]?.text()?.trim()
-        String price = productDoc.select(".product-essential .regular-price .price")[0]?.text()?.trim()
-        price = price ?: productDoc.select(".product-essential .special-price .price")[0]?.text()?.trim()
-        if (price) {
-            price = price.replaceAll("[A-Za-z,]", "")
+        String regularPrice = productDoc.select(".product-essential .old-price .price-label")[0]?.text()?.trim()
+        String price = productDoc.select(".product-essential [itemprop=price]")[0]?.text()?.trim()
+        if(price) {
+            price = price.replaceAll("[A-Za-z,]", "").trim()
+        }
+        if(regularPrice) {
+            regularPrice = regularPrice.replaceAll("[A-Za-z,]", "").trim()
         }
         String model = ""
         Iterator<Element> iter = specs.iterator()
@@ -44,12 +47,12 @@ public class JSoupTest {
             Element spec = iter.next();
             String label = spec.select(".label")[0]?.text()?.trim()
             String value = spec.select(".data")[0]?.text()?.trim()
-            if (label == "Model") {
+            if(label == "Model") {
                 model = value
                 break
             }
         }
-        Integer result = db.insert("INSERT INTO `ryans_product` (`name`, `code`, `model`, `url`, `price`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `updated` = now()", [name, code, model, productUrl, price, name, model, productUrl, price])
+        Integer result = db.insert("INSERT INTO `ryans_product` (`name`, `code`, `model`, `url`, `price`, `regular_price`) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `regular_price` = ?, `updated` = now()", [name, code, model, productUrl, price, regularPrice, name, model, productUrl, price, regularPrice])
         if (result) {
             println("Product save succes: $code")
         } else {

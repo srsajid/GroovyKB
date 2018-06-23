@@ -36,11 +36,11 @@ public class MultiMediaKingdom {
         String model = productDoc.select(".summary.entry-summary .product_sku.sku")[0]?.text()?.trim() ?: ""
         if(!price) { return }
         Integer result = db.insert("INSERT INTO `mk_product` (`name`, `code`, `model`, `url`, `price`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `updated` = now()", [name, code, model, productUrl, price, name, model, productUrl, price])
-//        if(result) {
-//            println("Product save succes: $code")
-//        } else {
-//            println("Product save failed: $code")
-//        }
+        if(result) {
+            println("Product save succes: $code")
+        } else {
+            println("Product save failed: $code")
+        }
     }
 
     static void crawlCategory(String categoryURL) {
@@ -108,7 +108,7 @@ public class MultiMediaKingdom {
                 }
             }
         }
-        ExecutorService executor = Executors.newFixedThreadPool(50);
+        ExecutorService executor = Executors.newFixedThreadPool(30);
         MyMonitorThread monitor = new MyMonitorThread(executor, 3);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
