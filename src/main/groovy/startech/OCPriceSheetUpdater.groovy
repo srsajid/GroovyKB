@@ -116,19 +116,25 @@ class OCPriceSheetUpdater {
                 }
                 Double newPrice = value.new_price ? Double.parseDouble(value.new_price.toString()) : null
                 Integer newSortOrder = value.new_sort_order ? Double.parseDouble(value.new_sort_order.toString()) : null
-
-                String response = HttpUtil.doPostRequest("${host}index.php?route=operator/product_update_request/add", [
-                        product_id: value.product_id,
-                        new_status: newStatus,
-                        new_price: newPrice,
-                        new_sort_order: newSortOrder
-                ], ['Authorization': "Basic " + encoding])
+                String response = updatePrice(value.product_id, newStatus, newSortOrder, newPrice, '')
                 println(response)
-
             }
         }
 
     }
+
+    static String updatePrice(productId, newStatus, newSortOrder, newPrice, newRegularPrice) {
+        String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$operatorPass".getBytes());
+        String response = HttpUtil.doPostRequest("${host}index.php?route=operator/product_update_request/add", [
+                product_id: productId,
+                new_status: newStatus,
+                new_price: newPrice,
+                new_regular_price: newRegularPrice,
+                new_sort_order: newSortOrder
+        ], ['Authorization': "Basic " + encoding])
+        return response
+    }
+
     static void main(String[] args) {
         String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$operatorPass".getBytes());
         DB db = new DB("startech");

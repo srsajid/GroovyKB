@@ -47,10 +47,12 @@ public class LocalDatabaseUpdater {
             "sr_category",
             "sr_category_description",
             "sr_product_to_category",
+            "sr_category_to_store",
+            'sr_category_manufacturer',
+            'sr_category_manufacturer_description',
             "sr_url_alias"
     ]
 
-    static tableList3 = ["sr_customer", 'sr_order']
 
     synchronized void updateDatabase(String database, List tables) {
         Scanner scanner = new Scanner(System.in);
