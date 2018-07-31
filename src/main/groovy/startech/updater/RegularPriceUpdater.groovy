@@ -1,6 +1,5 @@
-package startech
+package startech.updater
 
-import http.HttpUtil
 import util.DB
 
 class RegularPriceUpdater {

@@ -5,7 +5,7 @@ package com.google.javascript.jscomp
 import minifier.CssMinifyPostProcessor
 
 class KoylaCompiler extends CommandLineRunner {
-	static version = 7;
+	static version = 10;
 
 	protected KoylaCompiler(String[] args) {
 		super(args)

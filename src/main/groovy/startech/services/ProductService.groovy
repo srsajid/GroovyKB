@@ -1,0 +1,40 @@
+package startech.services
+
+import org.springframework.web.util.UriUtils
+import startech.util.URL
+import util.DB
+
+class ProductService {
+    DB db
+    URL url
+    Map stockStatusIndex
+
+    ProductService(DB db)  {
+        this.db = db ?: new DB("startech")
+        this.url = new URL(this.db)
+        stockStatusIndex = [:]
+        this.db.getResult("select * from sr_stock_status").each {
+            stockStatusIndex[it.stock_status_id] = it.name
+        }
+    }
+
+    List getProducts(Map params) {
+        String sql = "select * from sr_product p left join sr_product_description pd on p.product_id = pd.product_id where p.`status` = 1"
+        if(params.category_id) {
+            sql += " and p.product_id in (select ptc.product_id from sr_product_to_category ptc where ptc.category_id = ${params.category_id})"
+        }
+        List<Map> results = [];
+        db.getResult(sql).each {Map product ->
+            product.url = url.rewrite(route: 'product/product', product_id: product['product_id']);
+            product.image = "https://www.startech.com.bd/image/${UriUtils.encodePath(product.image, "utf-8")}"
+            Integer quantity = Integer.parseInt(product.quantity);
+            if(product.manufacturer_id) {
+                List manufacturer = db.getResult("select m.manufacturer_id, m.name, md.meta_title, md.meta_description from sr_manufacturer_description md left join sr_manufacturer m on md.manufacturer_id = m.manufacturer_id where m.manufacturer_id = ${product.manufacturer_id}")
+                if(manufacturer) product.manufacturer  = manufacturer.first().name
+            }
+            product.stock_status = quantity > 0 ? "In Stock" : stockStatusIndex[product.stock_status_id]
+            results.add(product)
+        }
+        return results
+    }
+}

@@ -1,4 +1,4 @@
-package startech.util
+package startech.generator
 
 import org.apache.commons.lang.StringEscapeUtils
 import org.apache.poi.hssf.usermodel.HSSFCell
@@ -6,11 +6,12 @@ import org.apache.poi.hssf.usermodel.HSSFRow
 import org.apache.poi.hssf.usermodel.HSSFSheet
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.springframework.web.util.UriUtils
+import startech.util.URL
 import util.DB
 
 import java.text.NumberFormat
 
-class AllProductSheet {
+class GoogleFeedGenerator {
     public static void main(String[] args) {
         DB db = new DB("startech");
         URL url = new URL(db);

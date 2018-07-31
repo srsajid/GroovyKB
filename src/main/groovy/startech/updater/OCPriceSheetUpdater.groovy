@@ -1,4 +1,4 @@
-package startech
+package startech.updater
 
 import http.HttpUtil
 import org.apache.commons.lang.math.NumberUtils
