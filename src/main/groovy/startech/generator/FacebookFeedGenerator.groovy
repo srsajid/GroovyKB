@@ -56,16 +56,23 @@ class FacebookFeedGenerator {
             List products = productService.getProducts([category_id: category.category_id])
             products.each {Map product ->
                 if(cache.containsKey(product.product_id)) return
-                if(!product.stock_status || !product.manufacturer) {
+                if(!product.manufacturer) {
                     println(product.name)
                     count++
                     return
                 }
+                if (!product.stock_status) {
+                    return
+                }
+                String stockStatus = product.stock_status.toLowerCase().trim();
+                if(stockStatus != "in stock" && stockStatus != "out of stock") {
+                    stockStatus == "preorder"
+                }
                 mapWriter.write([
                     id: product.product_id,
                     title: product.name,
-                    description: product.short_description,
-                    availability: product.stock_status?.toLowerCase(),
+                    description: product.short_description ?: product.meta_description,
+                    availability: stockStatus,
                     condition: "new",
                     price:  String.format("%.2f BDT", Double.parseDouble(product.price)),
                     link: product.url,

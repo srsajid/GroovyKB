@@ -33,6 +33,7 @@ class ProductService {
                 if(manufacturer) product.manufacturer  = manufacturer.first().name
             }
             product.stock_status = quantity > 0 ? "In Stock" : stockStatusIndex[product.stock_status_id]
+            product.short_description = product.short_description.trim()
             results.add(product)
         }
         return results
