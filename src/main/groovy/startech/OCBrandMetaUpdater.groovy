@@ -8,7 +8,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import util.DB
 
 class OCBrandMetaUpdater {
-    private static final String DB_NAME = "startech";
+    private static final String DB_NAME = "mutho_phone";
 
     public static void main(String[] args) {
 
@@ -26,8 +26,8 @@ class OCBrandMetaUpdater {
         results.eachWithIndex { Map result, int i ->
             String manufacturerId = result.manufacturer_id, name = result.name.trim()
             name = StringEscapeUtils.unescapeHtml(name)
-            String metaTitle = "$name Shop Bangladesh | Star Tech"
-            String metaDescription = "Check out our wide range of $name products available online and in store. Compare and shop online at Star Tech today!"
+            String metaTitle = "$name Bangladesh | Mutho Phone"
+            String metaDescription = "Are you looking for $name  products in Bangladesh? Compare and find the best price for $name products"
             String sql = "update sr_manufacturer_description set meta_title = '${StringEscapeUtils.escapeSql(metaTitle)}', meta_description = '${StringEscapeUtils.escapeSql(metaDescription)}' where manufacturer_id = $manufacturerId;\n"
             writer.write(sql)
             row = sheet.createRow(i + 1);
