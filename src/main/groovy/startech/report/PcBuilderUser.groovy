@@ -1,6 +1,5 @@
 package startech.report
 
-import startech.LocalDatabaseUpdater
 import util.DB
 
 class PcBuilderUser {

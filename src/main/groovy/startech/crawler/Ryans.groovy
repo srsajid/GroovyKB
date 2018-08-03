@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-public class JSoupTest {
+public class Ryans {
     static db = new DB("price_compare");
     static ConcurrentHashMap<String, Integer> failedCount = new ConcurrentHashMap<String, Integer>()
 
