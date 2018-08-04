@@ -7,6 +7,7 @@ import org.supercsv.io.ICsvMapWriter
 import org.supercsv.prefs.CsvPreference
 import startech.services.CategoryService
 import startech.services.ProductService
+import startech.updater.LocalDatabaseUpdater
 import util.DB
 
 import java.text.NumberFormat
@@ -29,9 +30,9 @@ class FacebookFeedGenerator {
 
         return processors;
     }
-    public static void main(String[] args) {
+
+    public void generate(DB db) {
         Map cache = [:]
-        DB db = new DB("startech")
         CategoryService categoryService = new CategoryService(db)
         ProductService productService = new ProductService(db)
 
@@ -69,21 +70,25 @@ class FacebookFeedGenerator {
                     stockStatus == "preorder"
                 }
                 mapWriter.write([
-                    id: product.product_id,
-                    title: product.name,
-                    description: product.short_description ?: product.meta_description,
-                    availability: stockStatus,
-                    condition: "new",
-                    price:  String.format("%.2f BDT", Double.parseDouble(product.price)),
-                    link: product.url,
-                    image_link: product.image,
-                    brand: product.manufacturer,
-                    product_type: category.name
+                        id: product.product_id,
+                        title: product.name,
+                        description: product.short_description ?: product.meta_description,
+                        availability: stockStatus,
+                        condition: "new",
+                        price:  String.format("%.2f BDT", Double.parseDouble(product.price)),
+                        link: product.url,
+                        image_link: product.image,
+                        brand: product.manufacturer,
+                        product_type: category.name
                 ], header, processors);
                 cache[product.product_id] = true
             }
         }
         mapWriter.close();
         println(count)
+    }
+
+    public static void main(String[] args) {
+        new FacebookFeedGenerator().generate(new DB("startech"))
     }
 }

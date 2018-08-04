@@ -10,9 +10,9 @@ public class SiteMapGenerator {
     DB db
     URL url
 
-    SiteMapGenerator() {
-        db = new DB('price_compare')
-        url = new URL(db)
+    SiteMapGenerator(DB db) {
+        this.db = db ?: new DB('startech')
+        url = new URL(this.db)
     }
 
 
