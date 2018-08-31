@@ -20,8 +20,14 @@ class ProductService {
 
     List getProducts(Map params) {
         String sql = "select * from sr_product p left join sr_product_description pd on p.product_id = pd.product_id where p.`status` = 1"
+        if(params.in_stock) {
+            sql += " and p.quantity > 0"
+        }
         if(params.category_id) {
             sql += " and p.product_id in (select ptc.product_id from sr_product_to_category ptc where ptc.category_id = ${params.category_id})"
+        }
+        if(params.manufacturer_id) {
+            sql += " and p.manufacturer_id = '${params.manufacturer_id}'"
         }
         List<Map> results = [];
         db.getResult(sql).each {Map product ->

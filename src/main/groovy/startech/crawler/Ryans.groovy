@@ -110,13 +110,13 @@ public class Ryans {
 
     public static void CrawlCategories() {
         List categoryURLs = [
-                "https://ryanscomputers.com/network/router.html",
+                "https://ryanscomputers.com/laptop-notebook/filter/brand/hp.html",
                 "https://ryanscomputers.com/laptop-notebook.html",
                 "https://ryanscomputers.com/laptop-notebook/filter/brand/acer.html",
                 "https://ryanscomputers.com/laptop-notebook/filter/brand/asus.html",
                 "https://ryanscomputers.com/laptop-notebook/filter/brand/dell.html",
-                "https://ryanscomputers.com/laptop-notebook/filter/brand/hp.html",
                 "https://ryanscomputers.com/laptop-notebook/filter/brand/lenovo.html",
+                "https://ryanscomputers.com/network/router.html",
                 "https://ryanscomputers.com/accessories.html",
                 "https://ryanscomputers.com/audio-video.html",
                 "https://ryanscomputers.com/components/mainboard/filter/brand/asrock.html",
@@ -144,6 +144,6 @@ public class Ryans {
     }
 
     public static void main(String[] args) {
-        crawler()
+        CrawlCategories()
     }
 }
