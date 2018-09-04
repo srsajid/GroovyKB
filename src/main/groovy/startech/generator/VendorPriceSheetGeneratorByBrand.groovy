@@ -56,11 +56,11 @@ class VendorPriceSheetGeneratorByBrand {
                 }
             }
 
-            FileOutputStream fileOut = new FileOutputStream("c:\\MyDrive\\db_price_brand.xls");
-            wb.write(fileOut);
-            fileOut.flush();
-            fileOut.close();
         }
+        FileOutputStream fileOut = new FileOutputStream("c:\\MyDrive\\db_price_brand.xls");
+        wb.write(fileOut);
+        fileOut.flush();
+        fileOut.close();
     }
 
 }
