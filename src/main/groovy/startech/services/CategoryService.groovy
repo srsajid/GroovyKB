@@ -10,6 +10,11 @@ class CategoryService {
         this.db = db ?: new DB("startech")
     }
 
+    Map getCategory(category_id) {
+        List<Map> results = db.getResult("select DISTINCT c.category_id, cd.name from  sr_category c left join sr_category_description cd on c.category_id = cd.category_id where c.category_id = $category_id and c.status = 1")
+        return results ? results.first() : null
+    }
+
     List getChildCategories(parent_id) {
         List results = db.getResult("select DISTINCT c.category_id, cd.name from  sr_category c left join sr_category_description cd on c.category_id = cd.category_id where c.parent_id = $parent_id and c.status = 1")
         return results ?: []

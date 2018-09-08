@@ -29,6 +29,7 @@ class ProductService {
         if(params.manufacturer_id) {
             sql += " and p.manufacturer_id = '${params.manufacturer_id}'"
         }
+        sql += "order by p.manufacturer_id asc, p.price asc"
         List<Map> results = [];
         db.getResult(sql).each {Map product ->
             product.url = url.rewrite(route: 'product/product', product_id: product['product_id']);

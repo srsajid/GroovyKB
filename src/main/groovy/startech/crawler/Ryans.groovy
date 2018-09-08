@@ -40,6 +40,8 @@ public class Ryans {
         }
         if(regularPrice) {
             regularPrice = regularPrice.replaceAll("[A-Za-z,]", "").trim()
+        } else {
+            regularPrice = "0"
         }
         String model = ""
         Iterator<Element> iter = specs.iterator()
@@ -144,6 +146,6 @@ public class Ryans {
     }
 
     public static void main(String[] args) {
-        CrawlCategories()
+        crawler()
     }
 }

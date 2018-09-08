@@ -34,7 +34,7 @@ class Village {
                 break
             }
         }
-        println("Name: ${name}\nPrice: ${price}\nURL:  ${productUrl}\nModel:${model}\n\n")
+        println("Name: ${name} - Price: ${price}")
         Integer result = db.insert("INSERT INTO `village_product` (`name`, `code`, `model`, `url`, `price`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `updated` = now()", [name, code, model, productUrl, price, name, model, productUrl, price])
 //        if(result) {
 //            println("Product save succes: $code")
@@ -87,7 +87,7 @@ class Village {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(20);
+        ExecutorService executor = Executors.newFixedThreadPool(50);
         MyMonitorThread monitor = new MyMonitorThread(executor, 3);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
