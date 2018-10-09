@@ -121,7 +121,6 @@ dependencies {
     compile 'net.sf.supercsv:super-csv:2.4.0'
     compile 'org.jsoup:jsoup:1.11.1'
 
-    compile 'net.spy:spymemcached'
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile fileTree(dir: 'libs', include: ['*.jar'])
