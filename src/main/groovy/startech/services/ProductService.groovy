@@ -1,5 +1,6 @@
 package startech.services
 
+import org.apache.commons.lang.StringEscapeUtils
 import org.springframework.web.util.UriUtils
 import startech.util.URL
 import util.DB
@@ -19,7 +20,7 @@ class ProductService {
     }
 
     List getProducts(Map params) {
-        String sql = "select * from sr_product p left join sr_product_description pd on p.product_id = pd.product_id where p.`status` = 1"
+        String sql = "select *, (CASE WHEN p.quantity > 0 THEN 1 ELSE 0 END) qty from sr_product p left join sr_product_description pd on p.product_id = pd.product_id where p.`status` = 1"
         if(params.in_stock) {
             sql += " and p.quantity > 0"
         }
@@ -29,9 +30,10 @@ class ProductService {
         if(params.manufacturer_id) {
             sql += " and p.manufacturer_id = '${params.manufacturer_id}'"
         }
-        sql += "order by p.manufacturer_id asc, p.price asc"
+        sql += "order by p.manufacturer_id asc, qty desc, p.price asc"
         List<Map> results = [];
         db.getResult(sql).each {Map product ->
+            product.name = StringEscapeUtils.unescapeHtml(product.name)
             product.url = url.rewrite(route: 'product/product', product_id: product['product_id']);
             product.image = "https://www.startech.com.bd/image/${UriUtils.encodePath(product.image, "utf-8")}"
             Integer quantity = Integer.parseInt(product.quantity);

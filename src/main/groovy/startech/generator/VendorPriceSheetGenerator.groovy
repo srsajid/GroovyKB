@@ -14,13 +14,12 @@ import util.DB
 
 
 class VendorPriceSheetGenerator {
-    final private static int PARENT_CATEGORY = 201;
-
     public static void main(String[] args) {
+        Long parentId = Long.parseLong(args[0])
         DB db = new DB("startech");
         ProductService productService = new ProductService(db)
         HSSFWorkbook wb = new HSSFWorkbook();
-        List<Map> childCategories =  db.getResult("select DISTINCT c.category_id, cd.name from  sr_category c left join sr_category_description cd on c.category_id = cd.category_id where c.parent_id = $PARENT_CATEGORY")
+        List<Map> childCategories =  db.getResult("select DISTINCT c.category_id, cd.name from  sr_category c left join sr_category_description cd on c.category_id = cd.category_id where c.parent_id = $parentId")
         childCategories.each {
             HSSFSheet sheet = wb.createSheet(StringEscapeUtils.unescapeHtml(it.name));
             HSSFRow row = sheet.createRow(0);
@@ -53,7 +52,7 @@ class VendorPriceSheetGenerator {
                 }
             }
         }
-        FileOutputStream fileOut = new FileOutputStream("c:\\MyDrive\\laptop_dp_price.xls");
+        FileOutputStream fileOut = new FileOutputStream("c:\\MyDrive\\${args[1]}.xls");
         wb.write(fileOut);
         fileOut.flush();
         fileOut.close();

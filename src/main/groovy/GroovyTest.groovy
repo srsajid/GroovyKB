@@ -10,6 +10,7 @@ import org.codehaus.groovy.runtime.GStringImpl
 import org.codehaus.groovy.runtime.callsite.CallSite
 import org.springframework.util.FileCopyUtils
 import org.springframework.web.util.UriUtils
+import util.DB
 import zip.ZipUtil
 
 import java.util.regex.Matcher
@@ -112,7 +113,26 @@ class GroovyTest {
     }
 
     static void main(String[] args) {
-        println UriUtils.encodePath("hello world", "UTF-8")
+        attr()
+    }
+
+    static attr() {
+        DB db = new DB("mutho_phone")
+        List<Map> groups = db.getResult("select * from sr_attribute_group ag left join sr_attribute_group_description agd on ag.attribute_group_id = agd.attribute_group_id where ag.attribute_profile_id = 2 order by sort_order")
+        List<Map> results = []
+        groups.each {group ->
+            List<Map> attrs = db.getResult("select * from sr_attribute ag left join sr_attribute_description agd on ag.attribute_id = agd.attribute_id where ag.attribute_group_id = ${group.attribute_group_id}")
+            attrs.each {
+                results.add([
+                        attribute_id: it.attribute_id,
+                        group_name: group.name,
+                        attribute_name: it.name,
+                        maping: ""
+                ])
+            }
+        }
+        println(JsonOutput.toJson(results))
+
     }
 }
 
