@@ -6,7 +6,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator
 import util.DB
 
 public class LocalDatabaseUpdater {
-    final private static String host = "https://www.startech.com.bd/admin/";
+    final private static String HOST = "www.startech.com.bd";
     final private static String operatorEmail = "srsajid";
     final private static String operatorPass = "";
 
@@ -54,14 +54,15 @@ public class LocalDatabaseUpdater {
     ]
 
 
-    synchronized void updateDatabase(DB db, List tables) {
+    synchronized void updateDatabase(DB db, List tables, String host = null) {
+        host = host ?: HOST
         Scanner scanner = new Scanner(System.in);
         print("Enter Pass:")
         String password = scanner.nextLine();
         String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$password".getBytes());
 
         tables.each {
-            InputStream inputStream = HttpUtil.getPostConnection("${host}index.php?route=tool/backup/backup", [
+            InputStream inputStream = HttpUtil.getPostConnection("http://${host}/admin/index.php?route=tool/backup/backup", [
                     "backup[]": it
             ], ['Authorization': "Basic " + encoding]).inputStream
 

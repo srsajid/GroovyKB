@@ -5,7 +5,7 @@ package com.google.javascript.jscomp
 import minifier.CssMinifyPostProcessor
 
 class KoylaCompiler extends CommandLineRunner {
-	static version = 10;
+	static version = 21;
 
 	protected KoylaCompiler(String[] args) {
 		super(args)
@@ -16,6 +16,7 @@ class KoylaCompiler extends CommandLineRunner {
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\stylesheet\\bootstrap.css",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\stylesheet\\common.css",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\stylesheet\\home.css",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\css\\noUi\\nouislider.min.css",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\stylesheet\\category.css",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\stylesheet\\product.css",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\stylesheet\\accounts.css",
@@ -52,27 +53,15 @@ class KoylaCompiler extends CommandLineRunner {
 
 		args = [
 				"--js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\jquery\\jquery-2.1.1.min.js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\bootstrap\\js\\bootstrap.button.js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\common.js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\lazy.js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\search_suggestion.js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\lib\\jqlite\\jqlite.js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\cms\\common.js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\cms\\lazy.js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\cms\\search_suggestion.js",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\javascript\\site.js",
 				"--js_output_file",
 				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\javascript\\site.min.${version}.js"
 		].toArray()
 
 		new KoylaCompiler(args).run()
-
-		args = [
-				"--js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\jquery\\magnific\\jquery.magnific-popup.min.js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\operator.js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\product.js",
-				"--js_output_file",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\product.min.${version}.js"
-		]
-		new KoylaCompiler(args).run()
-
 	}
 }

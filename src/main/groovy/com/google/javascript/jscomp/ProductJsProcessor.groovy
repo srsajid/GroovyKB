@@ -5,7 +5,7 @@ package com.google.javascript.jscomp
 class ProductJsProcessor extends CommandLineRunner {
 	static contentTypes = ['application/javascript']
 
-	static version = 6;
+	static version = 8;
 
 	protected ProductJsProcessor(String[] args) {
 		super(args)
@@ -14,13 +14,11 @@ class ProductJsProcessor extends CommandLineRunner {
 	public static void main(String[] args) {
 		args = [
 				"--js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\jquery\\magnific\\jquery.magnific-popup.min.js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\operator.js",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\product.js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\cms\\operator.js",
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\cms\\product.js",
 				"--js_output_file",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\product.min.${version}.js"
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\javascript\\prod\\product.min.${version}.js"
 		]
 		new ProductJsProcessor(args).run()
-
 	}
 }

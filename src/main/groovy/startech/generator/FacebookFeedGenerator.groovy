@@ -49,7 +49,7 @@ class FacebookFeedGenerator {
                 "product_type" // 9
 
         ];
-        ICsvMapWriter mapWriter = new CsvMapWriter(new FileWriter("c:\\MyDrive\\facebook.csv"), CsvPreference.STANDARD_PREFERENCE);
+        ICsvMapWriter mapWriter = new CsvMapWriter(new FileWriter("c:\\MyDrive\\${db.database}\\facebook.csv"), CsvPreference.STANDARD_PREFERENCE);
         final CellProcessor[] processors = getProcessors();
         mapWriter.writeHeader(header); NumberFormat format = NumberFormat.getInstance(Locale.default);
         int count = 0

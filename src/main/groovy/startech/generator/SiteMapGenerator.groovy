@@ -63,7 +63,7 @@ public class SiteMapGenerator {
     }
 
     def generate() {
-        def writer = new FileWriter("C:\\MyDrive\\sitemap.xml")
+        def writer = new FileWriter("C:\\MyDrive\\${db.database}\\sitemap.xml")
         def xml = new MarkupBuilder(writer)
         xml.mkp.xmlDeclaration(version: "1.0", encoding: "utf-8")
         xml.urlset(xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9") {

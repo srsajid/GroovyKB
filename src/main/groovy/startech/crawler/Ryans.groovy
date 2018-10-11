@@ -31,10 +31,10 @@ public class Ryans {
     static crawlProduct(String productUrl) {
         Document productDoc = SRHttpConnection.connect(productUrl).get();
         Elements specs = productDoc.select("#product-attribute-specs-table tr");
-        String name = productDoc.select(".product-essential .product-name h2")[0]?.text()?.trim()
-        String code = productDoc.select(".product-essential .productsku span")[0]?.text()?.trim()
-        String regularPrice = productDoc.select(".product-essential .old-price .price-label")[0]?.text()?.trim()
-        String price = productDoc.select(".product-essential [itemprop=price]")[0]?.text()?.trim()
+        String name = productDoc.select("h2[itemprop=name]")[0]?.text()?.trim()
+        String code = productDoc.select(".productsku span")[0]?.text()?.trim()
+        String regularPrice = productDoc.select("[itemprop=offers] .old-price .price-label")[0]?.text()?.trim()
+        String price = productDoc.select("[itemprop=price]")[0]?.text()?.trim()
         if(price) {
             price = price.replaceAll("[A-Za-z,]", "").trim()
         }
@@ -94,7 +94,7 @@ public class Ryans {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(15);
+        ExecutorService executor = Executors.newFixedThreadPool(100);
         MyMonitorThread monitor = new MyMonitorThread(executor, 15);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
@@ -112,23 +112,15 @@ public class Ryans {
 
     public static void CrawlCategories() {
         List categoryURLs = [
-                "https://ryanscomputers.com/laptop-notebook/filter/brand/hp.html",
-                "https://ryanscomputers.com/laptop-notebook.html",
-                "https://ryanscomputers.com/laptop-notebook/filter/brand/acer.html",
-                "https://ryanscomputers.com/laptop-notebook/filter/brand/asus.html",
-                "https://ryanscomputers.com/laptop-notebook/filter/brand/dell.html",
-                "https://ryanscomputers.com/laptop-notebook/filter/brand/lenovo.html",
-                "https://ryanscomputers.com/network/router.html",
-                "https://ryanscomputers.com/accessories.html",
-                "https://ryanscomputers.com/audio-video.html",
-                "https://ryanscomputers.com/components/mainboard/filter/brand/asrock.html",
-                "https://ryanscomputers.com/components/mainboard/filter/brand/asus.html",
-                "https://ryanscomputers.com/components/mainboard/filter/brand/gigabyte.html",
-                "https://ryanscomputers.com/components/mainboard/filter/brand/msi.html",
-                "https://ryanscomputers.com/components/mainboard.html"
+                "https://ryanscomputers.com/monitor.html",
+                "https://ryanscomputers.com/components/processor.html",
+                "https://ryanscomputers.com/components/mainboard.html",
+                "https://ryanscomputers.com/components/graphics-card.html",
+                "https://ryanscomputers.com/components/mainboard.html",
+                "https://ryanscomputers.com/components/desktop-ram.html",
 
         ]
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+        ExecutorService executor = Executors.newFixedThreadPool(5);
         MyMonitorThread monitor = new MyMonitorThread(executor, 20);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
@@ -146,6 +138,9 @@ public class Ryans {
     }
 
     public static void main(String[] args) {
+        crawler()
+        crawler()
+        crawler()
         crawler()
     }
 }
