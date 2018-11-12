@@ -62,7 +62,7 @@ public class LocalDatabaseUpdater {
         String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$password".getBytes());
 
         tables.each {
-            InputStream inputStream = HttpUtil.getPostConnection("http://${host}/admin/index.php?route=tool/backup/backup", [
+            InputStream inputStream = HttpUtil.getPostConnection("https://${host}/admin/index.php?route=tool/backup/backup", [
                     "backup[]": it
             ], ['Authorization': "Basic " + encoding]).inputStream
 

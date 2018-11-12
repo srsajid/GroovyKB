@@ -43,7 +43,7 @@ class VendorPriceSheetGenerator {
             sheet.setColumnWidth(4, 5000);
             sheet.setColumnWidth(5, 5000);
 
-            List<Map> products = productService.getProducts([category_id: it.category_id, in_stock: true])
+            List<Map> products = productService.getProducts([category_id: it.category_id])
             products.eachWithIndex { Map product, int i ->
                 row = sheet.createRow(i + 1);
                 [product.product_id, product.name, product.url, product.stock_status, product.price, ""].eachWithIndex { String entry, int j ->

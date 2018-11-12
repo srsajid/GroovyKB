@@ -5,7 +5,7 @@ package com.google.javascript.jscomp
 class ListingJsProcessor extends CommandLineRunner {
 	static contentTypes = ['application/javascript']
 
-	static version = 1;
+	static version = 2;
 
 	protected ListingJsProcessor(String[] args) {
 		super(args)

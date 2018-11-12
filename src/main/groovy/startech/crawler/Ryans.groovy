@@ -94,7 +94,7 @@ public class Ryans {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(100);
+        ExecutorService executor = Executors.newFixedThreadPool(50);
         MyMonitorThread monitor = new MyMonitorThread(executor, 15);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
@@ -138,9 +138,6 @@ public class Ryans {
     }
 
     public static void main(String[] args) {
-        crawler()
-        crawler()
-        crawler()
         crawler()
     }
 }

@@ -5,7 +5,8 @@ package com.google.javascript.jscomp
 import minifier.CssMinifyPostProcessor
 
 class KoylaCompiler extends CommandLineRunner {
-	static version = 21;
+	static version = 22;
+	static blogCssVersion = 1
 
 	protected KoylaCompiler(String[] args) {
 		super(args)
@@ -35,9 +36,7 @@ class KoylaCompiler extends CommandLineRunner {
 		file.text = css
 
 		cssFiles = [
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\stylesheet\\bootstrap.css",
-				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\stylesheet\\common.css",
-				"C:\\xampp\\htdocs\\blog\\wp-content\\themes\\koyla\\blog.css"
+				"C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\stylesheet\\blog.css",
 		]
 
 		css = ""
@@ -46,7 +45,7 @@ class KoylaCompiler extends CommandLineRunner {
 		}
 
 		css = new CssMinifyPostProcessor().process(css)
-		file = new File("C:\\xampp\\htdocs\\blog\\wp-content\\themes\\koyla\\style.css")
+		file = new File("C:\\xampp\\htdocs\\startech\\catalog\\view\\theme\\koyla\\stylesheet\\blog.min.${blogCssVersion}.css")
 		if(file.exists()) file.delete()
 		file.createNewFile()
 		file.text = css
