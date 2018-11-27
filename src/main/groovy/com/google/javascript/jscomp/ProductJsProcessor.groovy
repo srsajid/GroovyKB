@@ -5,7 +5,7 @@ package com.google.javascript.jscomp
 class ProductJsProcessor extends CommandLineRunner {
 	static contentTypes = ['application/javascript']
 
-	static version = 8;
+	static version = 10;
 
 	protected ProductJsProcessor(String[] args) {
 		super(args)

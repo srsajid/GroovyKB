@@ -94,7 +94,7 @@ public class Ryans {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(50);
+        ExecutorService executor = Executors.newFixedThreadPool(30);
         MyMonitorThread monitor = new MyMonitorThread(executor, 15);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
