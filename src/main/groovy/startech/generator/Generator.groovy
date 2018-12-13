@@ -10,6 +10,6 @@ class Generator {
         DB db = new DB(database)
         new LocalDatabaseUpdater().updateDatabase(db, LocalDatabaseUpdater.advance, host)
         new FacebookFeedGenerator().generate(db)
-        new SiteMapGenerator(db).generate()
+        new SiteMapGenerator(db, host).generate()
     }
 }

@@ -3,9 +3,12 @@ package startech.util
 import util.DB;
 public class URL {
     DB db
-    public URL(DB db) {
+    String host = "www.startech.com.bd"
+    public URL(DB db, String host = null) {
         this.db = db
+        if(host) this.host = host
     }
+
     String rewrite(Map $data) {
         String $url = '';
         $data.each { String $key, String $value ->
@@ -35,6 +38,6 @@ public class URL {
                 }
             }
         }
-        return 'https://www.startech.com.bd' + $url
+        return "https://${this.host}" + $url
     }
 }

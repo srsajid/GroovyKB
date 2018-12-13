@@ -60,12 +60,10 @@ public class LocalDatabaseUpdater {
         print("Enter Pass:")
         String password = scanner.nextLine();
         String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$password".getBytes());
-
+        Map data = [PHP_AUTH_USER: operatorEmail, PHP_AUTH_PW: password]
         tables.each {
-            InputStream inputStream = HttpUtil.getPostConnection("https://${host}/admin/index.php?route=tool/backup/backup", [
-                    "backup[]": it
-            ], ['Authorization': "Basic " + encoding]).inputStream
-
+            data["backup[]"] = it
+            InputStream inputStream = HttpUtil.getPostConnection("https://${host}/admin/index.php?route=tool/backup/backup", data, ['Authorization': "Basic " + encoding]).inputStream
             ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
             populator.addScript(new InputStreamResource(inputStream))
             populator.populate(db.getConnection())

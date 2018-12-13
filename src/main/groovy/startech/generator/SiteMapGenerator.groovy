@@ -9,10 +9,12 @@ public class SiteMapGenerator {
     private static final String DB_PREFIX = 'sr_'
     DB db
     URL url
+    String host = "www.startech.com.bd"
 
-    SiteMapGenerator(DB db) {
+    SiteMapGenerator(DB db, String host = null) {
         this.db = db ?: new DB('startech')
-        url = new URL(this.db)
+        if(host) this.host = host
+        url = new URL(this.db, this.host)
     }
 
 
@@ -68,7 +70,7 @@ public class SiteMapGenerator {
         xml.mkp.xmlDeclaration(version: "1.0", encoding: "utf-8")
         xml.urlset(xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9") {
             url {
-                loc("https://www.startech.com.bd/")
+                loc("https://${this.host}/")
                 priority("1")
                 changefreq('weekly')
             }
