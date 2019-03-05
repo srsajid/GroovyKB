@@ -31,10 +31,10 @@ public class Ryans {
     static crawlProduct(String productUrl) {
         Document productDoc = SRHttpConnection.connect(productUrl).get();
         Elements specs = productDoc.select("#product-attribute-specs-table tr");
-        String name = productDoc.select("h2[itemprop=name]")[0]?.text()?.trim()
+        String name = productDoc.select("#product_addtocart_form .product-name")[0]?.text()?.trim()
         String code = productDoc.select(".productsku span")[0]?.text()?.trim()
-        String regularPrice = productDoc.select("[itemprop=offers] .old-price .price-label")[0]?.text()?.trim()
-        String price = productDoc.select("[itemprop=price]")[0]?.text()?.trim()
+        String regularPrice = productDoc.select("#product_addtocart_form .old-price .price-label")[0]?.text()?.trim()
+        String price = productDoc.select("#product_addtocart_form .special-price .price-label .price")[0]?.text()?.trim()
         if(price) {
             price = price.replaceAll("[A-Za-z,]", "").trim()
         }
@@ -94,7 +94,7 @@ public class Ryans {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(30);
+        ExecutorService executor = Executors.newFixedThreadPool(40);
         MyMonitorThread monitor = new MyMonitorThread(executor, 15);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();

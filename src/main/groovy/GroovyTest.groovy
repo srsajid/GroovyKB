@@ -5,7 +5,12 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import hibernate.Employee
 import log4j.Main
+import org.apache.commons.lang.StringEscapeUtils
 import org.apache.logging.log4j.core.util.FileUtils
+import org.apache.poi.hssf.usermodel.HSSFCell
+import org.apache.poi.hssf.usermodel.HSSFRow
+import org.apache.poi.hssf.usermodel.HSSFSheet
+import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.codehaus.groovy.runtime.GStringImpl
 import org.codehaus.groovy.runtime.callsite.CallSite
 import org.springframework.util.FileCopyUtils
@@ -23,8 +28,7 @@ import java.util.zip.ZipOutputStream
  */
 class GroovyTest {
     static C _a = new C()
-    static C c  = null
-
+    static C c = null
 
 
     static void test() {
@@ -35,7 +39,7 @@ class GroovyTest {
     public static void icon() {
         File file = new File("D:\\codes\\extreme\\extreme2\\ref\\plugins\\snippet\\web-app\\images\\icons")
         Map map = [:]
-        file.eachFile(FileType.FILES, { File file1->
+        file.eachFile(FileType.FILES, { File file1 ->
             String key = file1.name.split("\\.")[0]
             map[key] = file1.name
         });
@@ -49,12 +53,12 @@ class GroovyTest {
         File plugins = new File("D:\\codes\\extreme\\extreme2\\ref\\plugins");
         def copier = { File plugin, String prefix = "\\plugins\\" ->
             File toCopy = new File(plugin, "grails-app\\i18n\\messages.properties")
-            if(toCopy.exists()) {
+            if (toCopy.exists()) {
                 new File("d:\\ms${prefix}\\${plugin.name}\\server-side").mkdirs()
                 FileCopyUtils.copy(toCopy, new File("d:\\ms${prefix}\\${plugin.name}\\server-side\\messages.properties"))
             }
             toCopy = new File(plugin, "web-app\\js\\i18n\\messages.properties")
-            if(toCopy.exists()) {
+            if (toCopy.exists()) {
                 new File("d:\\ms${prefix}\\${plugin.name}\\client-side").mkdirs()
                 FileCopyUtils.copy(toCopy, new File("d:\\ms${prefix}\\${plugin.name}\\client-side\\messages.properties"))
             }
@@ -65,14 +69,14 @@ class GroovyTest {
     }
 
     static check() {
-        def  cMil = System.currentTimeMillis()
+        def cMil = System.currentTimeMillis()
         for (int i = 0; i < 500; i++) {
             test()
         }
         println(System.currentTimeMillis() - cMil)
     }
 
-     def y(Closure closure) {
+    def y(Closure closure) {
         String str = "Joy bangla"
 //        closure.setProperty("myProp", """Hello World""")
 //        closure.delegate = new Test()
@@ -91,7 +95,7 @@ class GroovyTest {
         c1()
     }
 
-    def x () {
+    def x() {
         String str = "Hello World"
         def closure = {
             println(str)
@@ -113,21 +117,30 @@ class GroovyTest {
     }
 
     static void main(String[] args) {
-        attr()
+        File file = new File("c:\\MyDrive\\partner.csv")
+        String text = ""
+        file.eachLine {
+            if(!it.startsWith("0")) {
+                it = "0" + it
+            }
+            text += it.replaceAll(" ", "")
+            text += "\n"
+        }
+        file.text = text
     }
 
     static attr() {
         DB db = new DB("mutho_phone")
         List<Map> groups = db.getResult("select * from sr_attribute_group ag left join sr_attribute_group_description agd on ag.attribute_group_id = agd.attribute_group_id where ag.attribute_profile_id = 2 order by sort_order")
         List<Map> results = []
-        groups.each {group ->
+        groups.each { group ->
             List<Map> attrs = db.getResult("select * from sr_attribute ag left join sr_attribute_description agd on ag.attribute_id = agd.attribute_id where ag.attribute_group_id = ${group.attribute_group_id}")
             attrs.each {
                 results.add([
-                        attribute_id: it.attribute_id,
-                        group_name: group.name,
+                        attribute_id  : it.attribute_id,
+                        group_name    : group.name,
                         attribute_name: it.name,
-                        maping: ""
+                        maping        : ""
                 ])
             }
         }
@@ -138,10 +151,12 @@ class GroovyTest {
 
 class Test {
     String str;
+
     public Test() {
         str = "Gang bang"
     }
 }
+
 class Enclosing {
     void run() {
         def whatIsThisObject = { getThisObject() }
@@ -155,6 +170,7 @@ class EnclosedInInnerClass {
     class Inner {
         Closure cl = { this }
     }
+
     void run() {
         def inner = new Inner()
         assert inner.cl() == inner

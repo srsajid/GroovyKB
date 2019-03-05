@@ -1,11 +1,13 @@
 
 
-package com.google.javascript.jscomp
+package com.compiler
+
+import com.google.javascript.jscomp.CommandLineRunner
 
 class ListingJsProcessor extends CommandLineRunner {
 	static contentTypes = ['application/javascript']
 
-	static version = 2;
+	static version = 3;
 
 	protected ListingJsProcessor(String[] args) {
 		super(args)

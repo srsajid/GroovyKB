@@ -8,13 +8,13 @@ import util.DB;
 public class SiteMapGenerator {
     private static final String DB_PREFIX = 'sr_'
     DB db
-    URL url
+    def url
     String host = "www.startech.com.bd"
 
-    SiteMapGenerator(DB db, String host = null) {
+    SiteMapGenerator(DB db, String host = null, def url = null) {
         this.db = db ?: new DB('startech')
         if(host) this.host = host
-        url = new URL(this.db, this.host)
+        this.url = url ?: new URL(this.db, this.host)
     }
 
 

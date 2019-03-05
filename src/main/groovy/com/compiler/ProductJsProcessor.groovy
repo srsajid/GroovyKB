@@ -1,6 +1,8 @@
 
 
-package com.google.javascript.jscomp
+package com.compiler
+
+import com.google.javascript.jscomp.CommandLineRunner
 
 class ProductJsProcessor extends CommandLineRunner {
 	static contentTypes = ['application/javascript']

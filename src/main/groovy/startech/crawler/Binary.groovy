@@ -51,7 +51,7 @@ class Binary {
 
     static void crawler() {
         Document doc = SRHttpConnection.connect(HOST).get();
-        Elements menus = doc.select(".navbar-main-menu a:not(.btn-main)")
+        Elements menus = doc.select("#menu-main-menu-1a:not(.btn-main)")
         List<String> categoryURLs = []
         menus.each {
             String url = it.attr("href").trim()

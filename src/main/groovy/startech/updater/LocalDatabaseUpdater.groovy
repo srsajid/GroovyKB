@@ -57,10 +57,12 @@ public class LocalDatabaseUpdater {
     synchronized void updateDatabase(DB db, List tables, String host = null) {
         host = host ?: HOST
         Scanner scanner = new Scanner(System.in);
+        print("Username:")
+        String username = scanner.nextLine();
         print("Enter Pass:")
         String password = scanner.nextLine();
-        String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$password".getBytes());
-        Map data = [PHP_AUTH_USER: operatorEmail, PHP_AUTH_PW: password]
+        String encoding = Base64.getEncoder().encodeToString("$username:$password".getBytes());
+        Map data = [PHP_AUTH_USER: username, PHP_AUTH_PW: password]
         tables.each {
             data["backup[]"] = it
             InputStream inputStream = HttpUtil.getPostConnection("https://${host}/admin/index.php?route=tool/backup/backup", data, ['Authorization': "Basic " + encoding]).inputStream
@@ -73,6 +75,7 @@ public class LocalDatabaseUpdater {
 
     public static void main(String[] args) {
         List tables = args[1] == "advance" ? advance : simple
-        new LocalDatabaseUpdater().updateDatabase(new DB(args[0]), tables)
+        String host = args.length >= 3 ? args[2] : null
+        new LocalDatabaseUpdater().updateDatabase(new DB(args[0]), tables, host)
     }
 }

@@ -1,3 +1,4 @@
+import groovy.json.JsonSlurper;
 import net.glxn.qrgen.javase.QRCode;
 
 import java.io.File;
@@ -21,9 +22,10 @@ public class JavaTest {
 
     }
     public static void main(String[] args) throws Exception {
-       int xdd =  new InnerClass2().x();
-        Exception x = new Exception();
-        throw x;
-//        echo(x);
+//       int xdd =  new InnerClass2().x();
+//        Exception x = new Exception();
+//        throw x;
+////        echo(x);
+
     }
 }
