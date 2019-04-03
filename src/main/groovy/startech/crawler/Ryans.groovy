@@ -28,6 +28,27 @@ public class Ryans {
         return productURLs
     }
 
+    static Map get(String code) {
+        List results = db.getResult("select * from ryans_product where `code` = '${code}'")
+        return  results ? results.first() : null
+    }
+
+    static Integer add(name, code, model, type, productUrl, price, regularPrice) {
+       return db.insert("INSERT INTO `ryans_product` (`name`, `code`, `model`, `type`, `url`, `price`, `regular_price`) VALUES (?, ?, ?, ?, ?, ?, ?)", [name, code, model, type, productUrl, price, regularPrice])
+    }
+
+    static Integer update(name, code, model, type, productUrl, price, regularPrice) {
+        return db.insert("UPDATE `ryans_product` SET `name` = ?, `model` = ?, `type` = ?, `url` = ?, `price` = ?, `regular_price` = ?, `updated` = now() WHERE code = ?", [name, model, type, productUrl, price, regularPrice, code])
+    }
+
+    static String getType(Document productDoc) {
+        Elements breadcrumbItems = productDoc.select(".breadcrumbs ul li:not(.home, .home-fix, .current)");
+        String type = breadcrumbItems.collect({
+            it.text().toString()
+        }).join(" > ")
+        return type;
+    }
+
     static crawlProduct(String productUrl) {
         Document productDoc = SRHttpConnection.connect(productUrl).get();
         Elements specs = productDoc.select("#product-attribute-specs-table tr");
@@ -35,6 +56,7 @@ public class Ryans {
         String code = productDoc.select(".productsku span")[0]?.text()?.trim()
         String regularPrice = productDoc.select("#product_addtocart_form .old-price .price-label")[0]?.text()?.trim()
         String price = productDoc.select("#product_addtocart_form .special-price .price-label .price")[0]?.text()?.trim()
+        String type = getType(productDoc)
         if(price) {
             price = price.replaceAll("[A-Za-z,]", "").trim()
         }
@@ -54,7 +76,15 @@ public class Ryans {
                 break
             }
         }
-        Integer result = db.insert("INSERT INTO `ryans_product` (`name`, `code`, `model`, `url`, `price`, `regular_price`) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `regular_price` = ?, `updated` = now()", [name, code, model, productUrl, price, regularPrice, name, model, productUrl, price, regularPrice])
+        Map ryansProduct = get(code)
+        Integer result
+        if(ryansProduct) {
+            type = type.size() > ryansProduct.type.size() ? type : ryansProduct.type
+            result = update(name, code, model, type, productUrl, price, regularPrice)
+        } else  {
+            result = add(name, code, model, type, productUrl, price, regularPrice)
+        }
+
         if (result) {
             println("Product save succes: $code")
         } else {

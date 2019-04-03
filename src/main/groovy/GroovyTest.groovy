@@ -4,6 +4,7 @@ import groovy.io.FileType
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import hibernate.Employee
+import http.HttpUtil
 import log4j.Main
 import org.apache.commons.lang.StringEscapeUtils
 import org.apache.logging.log4j.core.util.FileUtils
@@ -117,16 +118,7 @@ class GroovyTest {
     }
 
     static void main(String[] args) {
-        File file = new File("c:\\MyDrive\\partner.csv")
-        String text = ""
-        file.eachLine {
-            if(!it.startsWith("0")) {
-                it = "0" + it
-            }
-            text += it.replaceAll(" ", "")
-            text += "\n"
-        }
-        file.text = text
+      println HttpUtil.doPostRequest("https://www.bkashcluster.com:9081/dreamwave/merchant/trxcheck/sendmsg", "{\"user\":\"STARTECHENGINEERING\",\"pass\":\"G@15fgAqL\",\"msisdn\":\"01779172505\",\"trxid\":\"6C60OOJS1E\"}", ['Content-Type': 'application/json'])
     }
 
     static attr() {

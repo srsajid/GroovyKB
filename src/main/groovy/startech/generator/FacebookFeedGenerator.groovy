@@ -54,7 +54,7 @@ class FacebookFeedGenerator {
         mapWriter.writeHeader(header); NumberFormat format = NumberFormat.getInstance(Locale.default);
         int count = 0
         categoryService.leafCategories.each {Map category ->
-            List products = productService.getProducts([category_id: category.category_id])
+            List products = productService.getProducts([category_id: category.category_id, manufacturer_id: category.manufacturer_id])
             products.each {Map product ->
                 if(cache.containsKey(product.product_id)) return
                 if(!product.manufacturer) {

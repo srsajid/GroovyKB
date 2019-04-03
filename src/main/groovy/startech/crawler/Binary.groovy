@@ -14,26 +14,46 @@ import java.util.concurrent.Executors
 class Binary {
     static db = new DB("price_compare");
     static HOST = "http://www.binarylogic.com.bd/";
-    static crawlProduct(Element product) {
-        String name = product.select(".title a")[0]?.text()?.trim()
-        String url = product.select(".title a").attr("href")
-        if (!url.startsWith("http")) {
-            url = HOST + url
-        }
-        Map params = HttpUtil.getQueryMap(new URL(url).getQuery())
-        String code = params.p
-        String price = product.select(".price.new")[0]?.text()?.trim()
-        if(price) {
-            price = price.replaceAll(/[^\.0-9]/, "")
-        }
-        String model = ""
 
-        println("Name: ${name}\nPrice: ${price}\nURL:  ${url}\nModel:${model}\n\n")
-        db.insert("INSERT INTO `binary_product` (`name`, `code`, `model`, `url`, `price`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `updated` = now()", [name, code, model, url, price, name, model, url, price])
+    static crawlProduct(Element product) {
+        String name = product.select(".item-title a")[0]?.text()?.trim()
+        String url = product.select(".item-title a").attr("href")
+
+        try {
+            if (!url.startsWith("http")) {
+                url = HOST + url
+            }
+            String code = product.select(".add-to-cart a").attr("data-product_id")
+            String regularPrice = product.select(".regular-price del .amount")[0]?.text()?.trim()
+            if(regularPrice) {
+                regularPrice = regularPrice.replaceAll(/[^\.0-9]/, "")
+            }
+
+            String price = product.select(".regular-price ins .amount")[0]?.text()?.trim()
+            if(!price) {
+                price = product.select(".regular-price .amount")[0]?.text()?.trim()
+            }
+
+            if(price) {
+                price = price.replaceAll(/[^\.0-9]/, "")
+            }
+            String model = ""
+
+            Integer result = db.insert("INSERT INTO `binary_product` (`name`, `code`, `model`, `url`, `price`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `updated` = now()", [name, code, model, url, price, name, model, url, price])
+
+            if(result) {
+                println("Success - Code: $code Name: ${name} - Price: ${price}")
+            } else {
+                println("Failed - Code: $code Name: $name")
+            }
+        } catch (Exception ex) {
+            println(ex.message + "Url: $url")
+        }
+
     }
 
     static void crawlProducts(Document categoryDoc) {
-        Elements products = categoryDoc.select(".products-list .product-preview");
+        Elements products = categoryDoc.select(".products-grid .product-item");
         for (Element product : products) {
             crawlProduct(product)
         }
@@ -43,7 +63,7 @@ class Binary {
         Document doc = SRHttpConnection.connect(categoryURL).get();
         while (doc) {
             crawlProducts(doc)
-            Element nextPage = doc.select(".pagination [aria-label=Next]")[0]
+            Element nextPage = doc.select(".next.page-numbers")[0]
             String nextPageURL = nextPage ? nextPage.attr("href") : null
             doc = nextPageURL ? SRHttpConnection.connect(nextPageURL).get() : null
         }
@@ -51,7 +71,7 @@ class Binary {
 
     static void crawler() {
         Document doc = SRHttpConnection.connect(HOST).get();
-        Elements menus = doc.select("#menu-main-menu-1a:not(.btn-main)")
+        Elements menus = doc.select("#menu-main-menu-1 a:not(.btn-main)")
         List<String> categoryURLs = []
         menus.each {
             String url = it.attr("href").trim()
