@@ -10,7 +10,7 @@ import util.DB
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class Techland {
+class Techland2 {
     static db = new DB("price_compare");
     static Map crawlCache = [:]
 
@@ -34,41 +34,52 @@ class Techland {
         crawlCache[productUrl] = true
     }
 
-    static List getAllProductURLs(Document categoryDoc) {
+    static crawlProductByElem(Element element) {
+        Element nameElm = element.select(".caption a")[0]
+        String productUrl = nameElm.attr("href")
+        String name = nameElm.text()
+        String code = element.select(".fa-heart").parents().first().attr("onclick").findAll("[0-9]+").get(0)
+        String price = element.select(".price").text().trim()
+        if(price) {
+            price = price.replaceAll(/[^\.0-9]/, "")
+        }
+        String model = ""
+        Integer result = db.insert("INSERT INTO `techland_product` (`name`, `code`, `model`, `url`, `price`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `name` = ?, `model` = ?, `url` = ?, `price` = ?, `updated` = now()", [name, code, model, productUrl, price, name, model, productUrl, price])
+        if(result) {
+            println("Success - Code: $code Name: ${name} - Price: ${price}")
+        } else {
+            println("Failed - Code: $code Name: $name")
+        }
+        crawlCache[productUrl] = true
+    }
+
+    static void getAllProductURLs(Document categoryDoc) {
         List<String> productURLs = []
-        Elements products = categoryDoc.select("#content .product-grid .product");
+        Elements products = categoryDoc.select("#content .product-layout .product-thumb");
         for (Element product : products) {
-            Element name = product.select(".name a")[0]
-            if(name) {
-                productURLs.add(name.attr("href"))
+            try {
+           crawlProductByElem(product)
+            } catch (Exception ex) {
+                println(ex.message)
             }
         }
-        return productURLs
     }
 
     static void crawlCategory(String categoryURL) {
         if(crawlCache.containsKey(categoryURL)) return
-        List<String> productURLs = []
         Document doc = SRHttpConnection.connect(categoryURL).get();
         while (doc) {
-            productURLs.addAll(getAllProductURLs(doc))
+            getAllProductURLs(doc)
             Element nextPage = doc.select(".pagination .active").next()[0]
             String nextPageURL = nextPage ? nextPage.select("a").attr("href") : null
             doc = nextPageURL ? SRHttpConnection.connect(nextPageURL).get() : null
-        }
-        productURLs.each {
-            try {
-                crawlProduct(it)
-            } catch (Exception ex) {
-                println("Product URL: "  + it + "\nMessage: "  + ex.message + "\n----------------------------------------------")
-            }
         }
         crawlCache[categoryURL] = true
     }
 
     static void crawler() {
         Document doc = SRHttpConnection.connect("https://www.techlandbd.com/").get();
-        Elements menus = doc.select("header .megamenu > li")
+        Elements menus = doc.select("#menu ul.navbar-nav > li")
         List<String> categoryURLs = []
         menus.each {
             it.select("a").each {
@@ -79,7 +90,7 @@ class Techland {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        ExecutorService executor = Executors.newFixedThreadPool(50);
         MyMonitorThread monitor = new MyMonitorThread(executor, 3);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
@@ -97,7 +108,7 @@ class Techland {
 
     static void crawlPcComponents() {
         Document doc = SRHttpConnection.connect("https://www.techlandbd.com/").get();
-        Elements menus = doc.select("#main-menu li")
+        Elements menus = doc.select("header .megamenu > li:nth-child(3)")
         List<String> categoryURLs = []
         menus.each {
             it.select("a").each {

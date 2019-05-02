@@ -13,6 +13,7 @@ import java.util.concurrent.Executors
 
 
 public class Ryans {
+    static Map crawlCache = [:]
     static db = new DB("price_compare");
     static ConcurrentHashMap<String, Integer> failedCount = new ConcurrentHashMap<String, Integer>()
 
@@ -50,6 +51,9 @@ public class Ryans {
     }
 
     static crawlProduct(String productUrl) {
+        if(crawlCache.containsKey(productUrl))  {
+            return
+        }
         Document productDoc = SRHttpConnection.connect(productUrl).get();
         Elements specs = productDoc.select("#product-attribute-specs-table tr");
         String name = productDoc.select("#product_addtocart_form .product-name")[0]?.text()?.trim()
@@ -90,9 +94,14 @@ public class Ryans {
         } else {
             println("Product save failed: $code")
         }
+
+        crawlCache[productUrl] = true
     }
 
     static void crawlCategory(String categoryURL) {
+        if(crawlCache.containsKey(categoryURL)) {
+            return
+        }
         List<String> productURLs = []
         Document doc = SRHttpConnection.connect(categoryURL).get();
         while (doc) {
@@ -108,12 +117,12 @@ public class Ryans {
                 println("Product URL: " + it + "\nMessage: " + ex.message + "\n----------------------------------------------")
             }
         }
+        crawlCache[categoryURL] = true
     }
 
     static void crawler() {
         Document doc = SRHttpConnection.connect("https://ryanscomputers.com/").get();
         Elements menus = doc.select("ul.sm_megamenu_menu > li.other-toggle")
-        menus.remove(0)
         List<String> categoryURLs = []
         menus.each {
             it.select("a").each {
@@ -142,6 +151,7 @@ public class Ryans {
 
     public static void CrawlCategories() {
         List categoryURLs = [
+                "https://ryanscomputers.com/laptop-notebook.html",
                 "https://ryanscomputers.com/monitor.html",
                 "https://ryanscomputers.com/components/processor.html",
                 "https://ryanscomputers.com/components/mainboard.html",
@@ -150,7 +160,7 @@ public class Ryans {
                 "https://ryanscomputers.com/components/desktop-ram.html",
 
         ]
-        ExecutorService executor = Executors.newFixedThreadPool(5);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
         MyMonitorThread monitor = new MyMonitorThread(executor, 20);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
