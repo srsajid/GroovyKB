@@ -16,6 +16,35 @@ public class Ryans {
     static Map crawlCache = [:]
     static db = new DB("price_compare");
     static ConcurrentHashMap<String, Integer> failedCount = new ConcurrentHashMap<String, Integer>()
+    static List importantCategory = [
+            "https://ryanscomputers.com/laptop-notebook.html",
+            "https://ryanscomputers.com/monitor.html",
+            "https://ryanscomputers.com/components/processor.html",
+            "https://ryanscomputers.com/storage/ssd.html",
+            "https://ryanscomputers.com/storage/internal-hdd.html",
+            "https://ryanscomputers.com/components/mainboard.html",
+            "https://ryanscomputers.com/components/graphics-card.html",
+            "https://ryanscomputers.com/components/mainboard.html",
+            "https://ryanscomputers.com/components/desktop-ram.html",
+            "https://ryanscomputers.com/accessories/gaming.html",
+            "https://ryanscomputers.com/accessories/keyboard.html",
+            "https://ryanscomputers.com/accessories/mouse.html",
+            "https://ryanscomputers.com/audio-video/speaker.html",
+            "https://ryanscomputers.com/audio-video/headphone.html",
+            "https://ryanscomputers.com/audio-video/microphone.html",
+            "https://ryanscomputers.com/printer/all-printers.html",
+            "https://ryanscomputers.com/toner-cartridge-refill.html",
+            "https://ryanscomputers.com/desktop/all-in-one-pc.html",
+            "https://ryanscomputers.com/laptop-notebook/acer-laptop-price-all.html",
+            "https://ryanscomputers.com/laptop-notebook/apple-laptop-all.html",
+            "https://ryanscomputers.com/laptop-notebook/asus-laptop-price-all.html",
+            "https://ryanscomputers.com/laptop-notebook/dell-laptop-price-all.html",
+            "https://ryanscomputers.com/laptop-notebook/hp-laptop-price-all.html",
+            "https://ryanscomputers.com/laptop-notebook/lenovo-laptop-price-all.html",
+            "https://ryanscomputers.com/laptop-notebook/ilife-laptop-price-all.html",
+            "https://ryanscomputers.com/laptop-notebook/msi.html",
+            "https://ryanscomputers.com/office-equipment/projector.html",
+    ]
 
     static List getAllProductURLs(Document categoryDoc) {
         List<String> productURLs = []
@@ -123,7 +152,7 @@ public class Ryans {
     static void crawler() {
         Document doc = SRHttpConnection.connect("https://ryanscomputers.com/").get();
         Elements menus = doc.select("ul.sm_megamenu_menu > li.other-toggle")
-        List<String> categoryURLs = []
+        List<String> categoryURLs = importantCategory
         menus.each {
             it.select("a").each {
                 String url = it.attr("href").trim()
@@ -133,7 +162,7 @@ public class Ryans {
             }
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(40);
+        ExecutorService executor = Executors.newFixedThreadPool(30);
         MyMonitorThread monitor = new MyMonitorThread(executor, 15);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
@@ -150,17 +179,8 @@ public class Ryans {
     }
 
     public static void CrawlCategories() {
-        List categoryURLs = [
-                "https://ryanscomputers.com/laptop-notebook.html",
-                "https://ryanscomputers.com/monitor.html",
-                "https://ryanscomputers.com/components/processor.html",
-                "https://ryanscomputers.com/components/mainboard.html",
-                "https://ryanscomputers.com/components/graphics-card.html",
-                "https://ryanscomputers.com/components/mainboard.html",
-                "https://ryanscomputers.com/components/desktop-ram.html",
-
-        ]
-        ExecutorService executor = Executors.newFixedThreadPool(2);
+        List categoryURLs = importantCategory
+        ExecutorService executor = Executors.newFixedThreadPool(3);
         MyMonitorThread monitor = new MyMonitorThread(executor, 20);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();

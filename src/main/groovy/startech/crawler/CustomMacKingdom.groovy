@@ -72,6 +72,11 @@ public class CustomMacKingdom {
 
     public static void CrawlCategories() {
         List categoryURLs = [
+                "https://www.custommacbd.com/collections/apple-imac",
+                "https://www.custommacbd.com/collections/macbook-2018",
+                "",
+                "",
+                "",
         ]
         ExecutorService executor = Executors.newFixedThreadPool(5);
         MyMonitorThread monitor = new MyMonitorThread(executor, 3);

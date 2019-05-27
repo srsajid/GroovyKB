@@ -108,7 +108,7 @@ public class MultiMediaKingdom {
                 }
             }
         }
-        ExecutorService executor = Executors.newFixedThreadPool(30);
+        ExecutorService executor = Executors.newFixedThreadPool(50);
         MyMonitorThread monitor = new MyMonitorThread(executor, 3);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
