@@ -10,9 +10,9 @@ class ProductService {
     URL url
     Map stockStatusIndex
 
-    ProductService(DB db)  {
+    ProductService(DB db, url = null)  {
         this.db = db ?: new DB("startech")
-        this.url = new URL(this.db)
+        this.url = url ?: new URL(this.db)
         stockStatusIndex = [:]
         this.db.getResult("select * from sr_stock_status").each {
             stockStatusIndex[it.stock_status_id] = it.name
@@ -20,7 +20,7 @@ class ProductService {
     }
 
     List getProducts(Map params) {
-        String sql = "select *, (CASE WHEN p.quantity > 0 THEN 1 ELSE 0 END) qty from sr_product p left join sr_product_description pd on p.product_id = pd.product_id where p.`status` = 1"
+        String sql = "select *, (SELECT price FROM sr_product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id =  1 AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special, (CASE WHEN p.quantity > 0 THEN 1 ELSE 0 END) qty from sr_product p left join sr_product_description pd on p.product_id = pd.product_id where p.`status` = 1"
         if(params.in_stock) {
             sql += " and p.quantity > 0"
         }

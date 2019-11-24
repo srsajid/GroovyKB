@@ -13,6 +13,7 @@ import util.DB
 import java.text.NumberFormat
 
 class FacebookFeedGenerator {
+
     private static CellProcessor[] getProcessors() {
 
         final CellProcessor[] processors =[
@@ -31,10 +32,10 @@ class FacebookFeedGenerator {
         return processors;
     }
 
-    public void generate(DB db) {
+    public void generate(DB db, url = null) {
         Map cache = [:]
         CategoryService categoryService = new CategoryService(db)
-        ProductService productService = new ProductService(db)
+        ProductService productService = new ProductService(db, url)
 
         final String[] header = [
                 "id", // 0

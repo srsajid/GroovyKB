@@ -118,7 +118,7 @@ class GroovyTest {
     }
 
     static void main(String[] args) {
-      println HttpUtil.doPostRequest("https://www.bkashcluster.com:9081/dreamwave/merchant/trxcheck/sendmsg", "{\"user\":\"STARTECHENGINEERING\",\"pass\":\"G@15fgAqL\",\"msisdn\":\"01779172505\",\"trxid\":\"6C60OOJS1E\"}", ['Content-Type': 'application/json'])
+        println    "Basic " + Base64.getEncoder().encodeToString("drongo:5UG7VGlaEVMMyFjLA7jmEK1NiMWigk2P5aJcsFNxDg0bZB8Hbfr5Uiheg".getBytes());
     }
 
     static attr() {

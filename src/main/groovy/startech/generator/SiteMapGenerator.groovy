@@ -34,19 +34,22 @@ public class SiteMapGenerator {
 
             List children_level_1 = this.getCategories(Integer.parseInt(category['category_id']));
             for (Map child : children_level_1) {
-                urls.add(this.url.rewrite(route: 'product/category', path: category['category_id'] + '_' + child['category_id']))
+                String children_level_1_path = child["path_url"].toBoolean() ? category['category_id'] + '_' + child['category_id']  : child["category_id"];
+                urls.add(this.url.rewrite(route: 'product/category', path: children_level_1_path))
+
+
                 List children_level_2 = this.getCategories(Integer.parseInt(child['category_id']));
 
                 for (Map child_2 : children_level_2) {
-                    urls.add(this.url.rewrite(route: 'product/category', path: category['category_id'] + '_' + child['category_id'] + '_' + child_2['category_id']))
+                    urls.add(this.url.rewrite(route: 'product/category', path: child_2['path_url'].toBoolean() ? (category['category_id'] + '_' + child['category_id'] + '_' + child_2['category_id']) : child_2['category_id']))
                 }
-                if(children_level_2) continue
+
                 children_level_2 = getCategoryManufacturer(Integer.parseInt(child['category_id']))
                 for (Map child_2 : children_level_2) {
-                    urls.add(this.url.rewrite(route: 'product/manufacturer/info', path: category['category_id'] + '_' + child['category_id'], manufacturer_id: child_2['manufacturer_id']))
+                    urls.add(this.url.rewrite(route: 'product/manufacturer/info', path: children_level_1_path, manufacturer_id: child_2['manufacturer_id']))
                 }
             }
-            if(children_level_1) continue
+
             children_level_1 = getCategoryManufacturer(Integer.parseInt(category['category_id']))
             for (Map child : children_level_1) {
                 urls.add(this.url.rewrite(route: 'product/manufacturer/info', path: category['category_id'], manufacturer_id: child['manufacturer_id']))

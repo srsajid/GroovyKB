@@ -11,7 +11,7 @@ import org.apache.poi.ss.usermodel.Row
 import util.DB
 
 class OCPriceSheetUpdater {
-    final private static String host = "https://www.startech.com.bd/";
+    final private static String HOST = "https://www.startech.com.bd/";
     final private static String operatorEmail = "administrator@startech.com.bd";
     final private static String operatorPass = "ASDFG;lkjh";
 
@@ -123,8 +123,9 @@ class OCPriceSheetUpdater {
 
     }
 
-    static String updatePrice(productId, newStatus, newSortOrder, newPrice, newRegularPrice) {
-        String encoding = Base64.getEncoder().encodeToString("$operatorEmail:$operatorPass".getBytes());
+    static String updatePrice(productId, newStatus, newSortOrder, newPrice, newRegularPrice, String host, String encoding = null) {
+        encoding = encoding ?: Base64.getEncoder().encodeToString("$operatorEmail:$operatorPass".getBytes());
+        host = host ?: HOST
         String response = HttpUtil.doPostRequest("${host}index.php?route=operator/product_update_request/add", [
                 product_id: productId,
                 new_status: newStatus,

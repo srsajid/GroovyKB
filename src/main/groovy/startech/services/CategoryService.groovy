@@ -21,6 +21,7 @@ class CategoryService {
     }
 
     List getCategoryManufacturer(parent_id) {
+        return []
         List results = db.getResult("select DISTINCT cm.manufacturer_id, cm.category_id, cmd.name, cm.sort_order from  sr_category_manufacturer cm left join sr_category_manufacturer_description cmd on cm.category_manufacturer_id = cmd.category_manufacturer_id where cm.category_id = $parent_id order by cm.sort_order")
         return results ?: []
     }

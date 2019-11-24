@@ -22,7 +22,7 @@ public class LocalDatabaseUpdater {
             "sr_filter",
             "sr_filter_description",
             "sr_filter_description",
-            "sr_stock_status",
+//            "sr_stock_status",
             "sr_manufacturer",
             "sr_manufacturer_description",
             "sr_category",

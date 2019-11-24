@@ -18,12 +18,15 @@ class OCPriceSheetGenerator {
     final private static int PARENT_CATEGORY = 120;
 
     public static void main(String[] args) {
-        DB db = new DB("startech");
+        Scanner scanner = new Scanner(System.in)
+        print("Database: ")
+        String database = scanner.nextLine()
+        DB db = new DB(database);
         CategoryService categoryService = new CategoryService(db)
         ProductService productService = new ProductService(db)
 
         HSSFWorkbook wb = new HSSFWorkbook();
-        List<Map> childCategories =  categoryService.getChildCategories(PARENT_CATEGORY)
+        List<Map> childCategories =  categoryService.getLeafCategories()
         if(childCategories.size() == 0) {
             Map category = categoryService.getCategory(PARENT_CATEGORY)
             childCategories.add([category_id: category.id, name: category.description.name])
@@ -40,35 +43,45 @@ class OCPriceSheetGenerator {
         headStyle.setFont(font)
 
         childCategories.each {
-            HSSFSheet sheet = wb.createSheet(StringEscapeUtils.unescapeHtml(it.name));
-            HSSFRow row = sheet.createRow(0);
-            ["Product ID", "Name", "Model", "Price", "New Price", "Regular Price", "New Regular Price" ,"Status", "New Status", "Sort Order", "New Sort Order"].eachWithIndex { String entry, int j ->
-                HSSFCell cell = row.createCell(j);
-                cell.setCellValue(entry)
-                cell.setCellStyle(headStyle);
-            }
-            sheet.setColumnWidth(0, 2560);
-            sheet.setColumnWidth(1, 18000);
-            sheet.setColumnWidth(2, 7000);
-            sheet.setColumnWidth(3, 3500);
-            sheet.setColumnWidth(5, 3500);
-            sheet.setColumnWidth(4, 5000);
-            sheet.setColumnWidth(6, 5000);
-            sheet.setColumnWidth(7, 5000);
-            sheet.setColumnWidth(8, 5000);
-            sheet.setColumnWidth(9, 5000);
-            sheet.setColumnWidth(10, 6000);
-            List<Map> products = productService.getProducts([category_id: it.category_id])
-            products.eachWithIndex { Map product, int i ->
-                row = sheet.createRow(i + 1);
-                [product.product_id, StringEscapeUtils.unescapeHtml(product.name), StringEscapeUtils.unescapeHtml(product.model), product.price, "", product.regular_price, "", product.stock_status, "", product.sort_order, ""].eachWithIndex { String entry, int j ->
+            try {
+                List nameParts = it.name.split(">").collect { it.trim() };
+                if(nameParts.size() > 2) {
+                    nameParts.remove(0)
+                }
+                String sheetname = StringEscapeUtils.unescapeHtml(nameParts.join("_"))
+                HSSFSheet sheet = wb.createSheet(sheetname);
+                HSSFRow row = sheet.createRow(0);
+                ["Product ID", "Name", "SKU", "Quantity", "Price", "New Price", "Regular Price", "New Regular Price" ,"Status", "New Status", "Sort Order", "New Sort Order"].eachWithIndex { String entry, int j ->
                     HSSFCell cell = row.createCell(j);
                     cell.setCellValue(entry)
-                    cell.setCellStyle(style)
+                    cell.setCellStyle(headStyle);
                 }
+                sheet.setColumnWidth(0, 2560);
+                sheet.setColumnWidth(1, 18000);
+                sheet.setColumnWidth(2, 7000);
+                sheet.setColumnWidth(3, 3500);
+                sheet.setColumnWidth(4, 3500);
+                sheet.setColumnWidth(5, 3500);
+                sheet.setColumnWidth(6, 5000);
+                sheet.setColumnWidth(7, 5000);
+                sheet.setColumnWidth(8, 5000);
+                sheet.setColumnWidth(9, 5000);
+                sheet.setColumnWidth(10, 5000);
+                sheet.setColumnWidth(11, 6000);
+                List<Map> products = productService.getProducts([category_id: it.category_id, manufacturer_id: it.manufacturer_id])
+                products.eachWithIndex { Map product, int i ->
+                    row = sheet.createRow(i + 1);
+                    [product.product_id, StringEscapeUtils.unescapeHtml(product.name), product.sku, product.quantity, product.special ?: product.price, "", product.regular_price, "", product.stock_status, "", product.sort_order, ""].eachWithIndex { String entry, int j ->
+                        HSSFCell cell = row.createCell(j);
+                        cell.setCellValue(entry)
+                        cell.setCellStyle(style)
+                    }
+                }
+            } catch (Exception ex) {
+                println(ex.message)
             }
         }
-        FileOutputStream fileOut = new FileOutputStream("c:\\MyDrive\\accessories-price-List.xls");
+        FileOutputStream fileOut = new FileOutputStream("c:\\MyDrive\\${database}_price_sheet.xls");
         wb.write(fileOut);
         fileOut.flush();
         fileOut.close();
