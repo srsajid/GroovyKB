@@ -39,7 +39,7 @@ class PriceUpdater {
 
         DB db  = new DB("hpexclusive")
         println("Updating HP Exclusive Database .....")
-//        new LocalDatabaseUpdater().updateDatabase(db, LocalDatabaseUpdater.advance, "www.hpexclusive.com.bd")
+        new LocalDatabaseUpdater().updateDatabase(db, LocalDatabaseUpdater.advance, "www.hpexclusive.com.bd")
 
         Scanner scanner = new Scanner(System.in)
         print("Category Id:")
@@ -51,7 +51,7 @@ class PriceUpdater {
             Double price = null
             def starProduct
             if (it.sku) {
-                List results = starDB.getResult("select * from sr_product p left join sr_product_description pd on p.product_id = pd.product_id where p.product_id = ${it.sku}")
+                List results = starDB.getResult("select * from sr_product p left join sr_product_description pd on p.product_id = pd.product_id where p.product_id = '${it.sku}'")
                 if(results.size()) {
                     starProduct = results.first()
                 }
@@ -59,7 +59,7 @@ class PriceUpdater {
             if(starProduct) {
                 sortOrder =  Integer.parseInt( starProduct.sort_order)
                 price = Double.parseDouble( starProduct.price)
-                println(StringEscapeUtils.unescapeHtml(it.name)  + " ----- " + StringEscapeUtils.unescapeHtml(starProduct.name))
+//                println(StringEscapeUtils.unescapeHtml(it.name)  + " ----- " + StringEscapeUtils.unescapeHtml(starProduct.name))
             } else {
                 println("SKU not Found: ${it.name}")
             }

@@ -1,31 +1,41 @@
-import groovy.json.JsonSlurper;
-import net.glxn.qrgen.javase.QRCode;
-
-import java.io.File;
+import java.util.Properties;
+import javax.mail.*;
+import javax.mail.internet.*;
 
 public class JavaTest {
-    public static void echo(Object s) {
-        System.out.println(s);
-    }
-    static void varArgs(String... strings) {
-        System.out.print(4);
-    }
-    public class InnerClass {
+    public static void main(String[] args) {
 
-    }
+        String host="bd.golive.email";
+        final String user="noreplay@starsolution.com.bd";//change accordingly
+        final String password="b04eb8So3";//change accordingly
 
-    static class InnerClass2 {
-       int x() {
-            echo("Hello World");
-          return 20;
-        }
+        String to="sajid@startechbd.com";//change accordingly
 
-    }
-    public static void main(String[] args) throws Exception {
-//       int xdd =  new InnerClass2().x();
-//        Exception x = new Exception();
-//        throw x;
-////        echo(x);
+        //Get the session object
+        Properties props = new Properties();
+        props.put("mail.smtp.host",host);
+        props.put("mail.smtp.auth", "true");
 
+        Session session = Session.getDefaultInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(user,password);
+                    }
+                });
+
+        //Compose the message
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(user));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            message.setSubject("javatpoint");
+            message.setText("This is simple program of sending email using JavaMail API");
+
+            //send the message
+            Transport.send(message);
+
+            System.out.println("message sent successfully...");
+
+        } catch (MessagingException e) {e.printStackTrace();}
     }
 }
