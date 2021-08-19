@@ -1,4 +1,3 @@
-import encryption.AES
 import net.glxn.qrgen.javase.QRCode
 
 /**

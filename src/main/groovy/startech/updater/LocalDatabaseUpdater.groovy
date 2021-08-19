@@ -35,7 +35,7 @@ public class LocalDatabaseUpdater {
             "sr_product_special",
             "sr_url_alias",
             "sr_product_to_category",
-            "sr_product_attribute",
+//            "sr_product_attribute",
             "sr_product_filter",
             "sr_product_to_store",
             "sr_product_related"

@@ -18,8 +18,8 @@ public class CCRun {
 
         // Below method is used to check that the Foo is getting loaded
         // by our custom class loader i.e CCLoader
-        Method printCL = clas.getMethod("printCL", null);
-        printCL.invoke(null, new Object[0]);
+//        Method printCL = clas.getMethod("printCL", null);
+//        printCL.invoke(null, new Object[0]);
     }
 
 }

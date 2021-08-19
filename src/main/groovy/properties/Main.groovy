@@ -1,6 +1,5 @@
 package properties
 
-import org.omg.CORBA.portable.OutputStream
 
 /**
  * Created by sajedur on 1/6/2016.
